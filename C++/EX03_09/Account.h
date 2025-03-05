@@ -14,8 +14,6 @@ class Account{
 
     void withdraw(int withDrawAmount);
 
-    void show();
-
     private:
     std::string name;
     int balance{0};

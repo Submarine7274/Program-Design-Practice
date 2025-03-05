@@ -2,7 +2,7 @@
 
 #include<iostream>
 #include<string>
-#include"Account2.h"
+#include"Account.h"
 using namespace std;
 
 Account::Account(std::string accountName, int initialBalance)
@@ -30,7 +30,4 @@ void Account::withdraw(int withdrawalAmount){
 }
 int Account::getBalance(){
     return balance;
-}
-void Account:: show(){
-    cout<<name<<" balance is $"<<balance<<endl;
 }
