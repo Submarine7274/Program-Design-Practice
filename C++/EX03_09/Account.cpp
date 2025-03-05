@@ -1,4 +1,4 @@
-//fig 3.8 Account.cpp
+//3.9 Account.cpp
 
 #include<iostream>
 #include<string>
