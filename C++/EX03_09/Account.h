@@ -1,4 +1,4 @@
-//Account.h
+//Account.h 函數的原型以及data member
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 #include<string>

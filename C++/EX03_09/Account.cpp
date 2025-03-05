@@ -1,5 +1,4 @@
-//3.9 Account.cpp
-
+//3.9 Account.cpp 把member function的功能寫完
 #include<iostream>
 #include<string>
 #include"Account.h"
