@@ -1,0 +1,60 @@
+body{
+    background-color: #88AED3;
+    display: flex;
+    justify-content: center;
+}
+.control{
+    background-color: #f0f0f0;
+    width: 600px;
+    padding: 30px;
+    margin-top: 50px;
+    border-radius: 20px;
+    box-shadow: 0,10px,20px,rgba(0,0,0,0.1); /*水平偏移、垂直偏移、模糊半徑、顏色*/
+}
+.input-area{
+    display: flex;
+    border-radius: 25px;
+    overflow: hidden;
+}
+.textinput{
+    flex-grow: 1;
+    /* border-radius: 25px; */
+    border:none;
+    background-color: #f0f4f8;
+    padding: 10px 15px;
+    outline: none;
+}
+.input-button{
+    font-size: 30px;
+    color: #f0f4f8;
+    background-color: #1678CC;
+    border:none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+.list{
+    list-style-type: none;
+    padding: 0;
+}
+.list li{
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #b2b2b2;
+}
+.list label{
+    flex-grow: 1;
+    justify-content: center;
+    text-align: center;
+}
+.checkbox{
+    margin-right: 15px;
+}
+.trashcan{
+    background: none;
+    border:none;
+    cursor: pointer;
+    opacity: 0.5;
+}
+.trashcan:hover{
+    opacity: 1;
+}
