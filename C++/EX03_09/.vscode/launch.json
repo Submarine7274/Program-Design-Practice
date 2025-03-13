@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/Efly01/Documents/GitHub/Program-Design-Practice/C++/EX03_09",
-      "program": "c:/Users/Efly01/Documents/GitHub/Program-Design-Practice/C++/EX03_09/build/Debug/outDebug",
+      "cwd": "c:/Users/Efly01/Documents/GitHub/processing",
+      "program": "c:/Users/Efly01/Documents/GitHub/processing/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
