@@ -2,9 +2,7 @@
 #include<string>
 #include"ImprovedStudent.h"
 int main (void){
-    Name studentname1{"Grace","M","Strongburg"};
-    Date studentbirthday1{1,15,1990};
-    Student student1{studentname1,Student::Sex::female,studentbirthday1,"ACS112","ACS112@gm.ntcu.edu.tw"};
-    cout<<student1.toString()<<endl;
+    Student student1{Name{"Grace", "M", "Strongburg"}, Student::Sex::female, Date{1, 15, 1990}, "ACS112", "ACS112@gm.ntcu.edu.tw"};  //測試建構子 Sex是student class裡的enum class
+    cout<<student1.toString()<<endl;                                                                        //測試整串輸出
     return 0;
 }

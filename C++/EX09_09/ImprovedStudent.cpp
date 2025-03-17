@@ -70,7 +70,7 @@ void Date::setYear(unsigned int newyear){       //年就比較簡單了，傳入
     year =newyear;                              //沒送出exception，就把傳入的年賦值給year
 }
 
-unsigned int Date::getMonth(){                  //這邊是get function
+unsigned int Date::getMonth(){
     return month;
 }
 unsigned int Date::getDay(){
@@ -109,7 +109,7 @@ string Name::getMiddleName()const{
 string Name::getLastName()const{
     return lastName;
 }
-string Name::toString() const {      //toString 是const的話，get function 都要是const 另外ostream不認得enum裡的東西，所以要寫判別式
+string Name::toString() const {      //toString 是const的話，get function 都要是const 
     ostringstream output;
     output << getFirstName()<<" "<<getMiddleName()<<" "<<getLastName();
     return output.str();
@@ -141,6 +141,9 @@ Student::Sex Student::getSex()const{     //注意enum class也是Student裡的�
 Date Student::getBirthday()const{
     return birthDay;
 }
+Name Student::getName()const{
+    return studentName;
+}
 string Student::getRegistrationNumber()const{
     return registrationNumber;
 }
@@ -149,6 +152,11 @@ string Student::getEmail()const{
 }
 string Student::toString() const {      //toString 是const的話，get function 都要是const 另外ostream不認得enum裡的東西，所以要寫判別式
     ostringstream output;
-    output << studentName.toString()<<" "<<(getSex() ==Sex::male?"male":"female")<<" "<<birthDay.toString()<<" "<<getRegistrationNumber()<<" "<<getEmail()<<"\n";
+    output << "Name: " << studentName.toString() << "\n"
+           << "Gender: " << (getSex() == Sex::male ? "Male" : "Female") << "\n"
+           << "Birthday: " << birthDay.toString() << "\n"
+           << "Registration Number: " << getRegistrationNumber() << "\n"
+           << "Email: " << getEmail() << "\n";
     return output.str();
+    /*這邊比較不一樣的地方是用變數名去呼叫他所屬class的function 像是studentName.toString()，以及birthDay.toString()*/
  }
