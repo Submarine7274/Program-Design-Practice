@@ -1,0 +1,35 @@
+@keyframes drivein {
+    0%{
+        transform: translateX(-40vw);
+
+    }
+    100%{
+        transform: translateX(0vw);
+
+    }
+}
+@keyframes driveout {
+    0%{
+        transform: translateX(0vw);
+
+    }
+    100%{
+        transform: translateX(140vw);
+
+    }
+}
+.loading-area{
+    display: flex;
+    font-size: 84px;
+    justify-content: center;
+    align-items: center;
+}
+.loading-text{
+    left: -40vw;
+    animation: drivein 3s ease-in-out  infinite ,driveout 3s ease-in-out 5s  infinite;
+}
+
+body{
+    background-color: #fff; 
+    overflow: hidden;
+}

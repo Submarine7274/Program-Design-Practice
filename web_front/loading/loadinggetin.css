@@ -1,69 +1,51 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow-x: hidden; 
+@keyframes moveText {
+    0% {
+        transform: translateX(-100vw);
+    }
+    100% {
+        transform: translateX(100vw);
+    }
 }
 
-.loading {
-    font-size: 84px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    text-align: center;
+@keyframes dropD {
+    0% {
+        transform: translateY(-100vh);
+    }
+    100% {
+        transform: translateY(0); /* 正確位置 */
+    }
+}
+
+.loading-container {
+    position: relative;
+    width: 100vw;
+    height: 100vw; /* 保證容器為正方形 */
+    overflow: hidden; /* 確保超出視窗的部分不會影響畫面 */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    position: relative;
-    overflow: hidden;
 }
 
-.d {
+.loading-text {
+    font-size: 84px;
+    font-weight: bold;
+    white-space: nowrap;
     position: absolute;
-    top: -10vh; /* 初始位置在畫面外 */
+    left: 0;
+    animation: moveText 5s linear infinite;
+}
+
+.loading-text .d {
+    display: inline-block;
+    position: relative;
+}
+
+.falling-d {
+    font-size: 84px;
+    font-weight: bold;
+    position: absolute;
     left: 50%;
-    transform: translateX(-50%);
-    animation: drop 1s ease-in-out forwards, drivein 1s ease-in-out 1.2s forwards;
-}
-
-/* 讓整個 "LOADING..." + "D" 移動出去 */
-.loading {
-    animation: driveout 3s ease-in-out 3s forwards;
-}
-
-/* "D" 掉下來的動畫 */
-@keyframes drop {
-    0% {
-        transform: translateX(-50%) translateY(-100vh);
-    }
-    70% {
-        transform: translateX(-50%) translateY(0);
-    }
-    80% {
-        transform: translateX(-50%) translateY(-20px); /* 輕微彈跳 */
-    }
-    100% {
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-/* "D" 滑進 LOADING */
-@keyframes drivein {
-    0% {
-        transform: translateX(-50%) translateY(0);
-    }
-    100% {
-        transform: translateX(0) translateY(0); /* 讓 D 進入並保持原位 */
-    }
-}
-
-/* "LOADING" 整體移動出去 */
-@keyframes driveout {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(100vw); /* 整個文字往右消失 */
-        opacity: 0;
-    }
+    top: 0; /* 從容器頂部開始掉落 */
+    transform: translateX(-50%); /* 保持居中 */
+    animation: dropD 1s ease-out 2s forwards infinite;
 }
