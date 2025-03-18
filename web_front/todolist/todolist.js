@@ -7,7 +7,7 @@ function changeList(){
         return;
     }
     const task = document.createElement("li");
-    //注意等於
+    //注意等於這個會在意型別
     task.innerHTML=`                                
         <input type="checkbox" class="checkbox">
         <label>${input.value}</label>
