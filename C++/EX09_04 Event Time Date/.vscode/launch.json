@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/submarine7274/Documents/GitHub/Program-Design-Practice/C++/EX09_04 Event Time Date",
+      "program": "/Users/submarine7274/Documents/GitHub/Program-Design-Practice/C++/EX09_04 Event Time Date/build/Debug/outDebug"
+    }
+  ]
+}
