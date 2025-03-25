@@ -25,14 +25,15 @@ void Event::setEventDate(Date newdate){
 void Event::setEventTime(Time newtime){
     eventTime.setTime(newtime);
 }
-void Event::setEventTittle(string newtitle){
+void Event::setEventTitle(string newtitle){
     eventtitle = newtitle;
 }
-string Event::getEventTittle(){
+string Event::getEventTitle(){
     return eventtitle;
 }
 string Event::toString(){
     ostringstream output;
-    output<<getEventTittle()<<eventDay.toString()<<eventTime.toStandardString()<<'/n'
-    <<getEventTittle()<<eventDay.toString()<<eventTime.toUniversalString()<<endl;
+    output<<getEventTitle()<<" "<<eventDay.toString()<<" "<<eventTime.toStandardString()<<"\n"
+    <<getEventTitle()<<" "<<eventDay.toString()<<" "<<eventTime.toUniversalString()<<endl;
+    return output.str();
 }

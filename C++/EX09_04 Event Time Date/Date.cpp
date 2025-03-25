@@ -25,9 +25,9 @@ Date::Date(unsigned int m, unsigned int d, unsigned int y){
     setYear(y);
 }
 void Date::setDate(const Date& newdate){
-    setDay(newdate.day);
-    setMonth(newdate.month);
-    setYear(newdate.year);
+    setDay(newdate.getDay());
+    setMonth(newdate.getMonth());
+    setYear(newdate.getYear());
 }
 
 // print Date in the format mm/dd/yyyy
@@ -74,13 +74,13 @@ void Date::setYear(unsigned int newyear){       //年就比較簡單了，傳入
     year =newyear;                              //沒送出exception，就把傳入的年賦值給year
 }
 
-unsigned int Date::getMonth(){                  //這邊是get function
+unsigned int Date::getMonth() const{                  //這邊是get function
     return month;
 }
-unsigned int Date::getDay(){
+unsigned int Date::getDay() const{
     return day;
 }
-unsigned int Date::getYear(){
+unsigned int Date::getYear() const{
     return year;
 }
 

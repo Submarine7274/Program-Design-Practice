@@ -17,9 +17,9 @@ void Time::setTime(int h, int m, int s) {
    setSecond(s); // set private field second
 }
 void Time::setTime(const Time& newtime){
-    setHour(newtime.hour);
-    setMinute(newtime.minute);
-    setSecond(newtime.second);
+    setHour(newtime.getHour());
+    setMinute(newtime.getMinute());
+    setSecond(newtime.getSecond());
 }
 
 // set hour value
@@ -56,10 +56,10 @@ void Time::setSecond(int s) {
 unsigned int Time::getHour() const { return hour; }
 
 // return minute value
-unsigned Time::getMinute() const { return minute; }
+unsigned int Time::getMinute() const { return minute; }
 
 // return second value
-unsigned Time::getSecond() const { return second; }
+unsigned int Time::getSecond() const { return second; }
 
 // return Time as a string in universal-time format (HH:MM:SS)
 string Time::toUniversalString() const {

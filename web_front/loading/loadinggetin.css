@@ -12,15 +12,15 @@
         transform: translateY(-100vh);
     }
     100% {
-        transform: translateY(0); /* 正確位置 */
+        transform: translateY(0); 
     }
 }
 
 .loading-container {
     position: relative;
     width: 100vw;
-    height: 100vw; /* 保證容器為正方形 */
-    overflow: hidden; /* 確保超出視窗的部分不會影響畫面 */
+    height: 100vw; 
+    overflow: hidden; 
     display: flex;
     justify-content: center;
     align-items: center;
@@ -45,7 +45,7 @@
     font-weight: bold;
     position: absolute;
     left: 50%;
-    top: 0; /* 從容器頂部開始掉落 */
-    transform: translateX(-50%); /* 保持居中 */
+    top: 0; 
+    transform: translateX(-50%);
     animation: dropD 1s ease-out 2s forwards infinite;
 }

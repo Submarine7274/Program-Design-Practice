@@ -14,9 +14,9 @@ class Date{
         void setDay(unsigned int);
         void setYear(unsigned int);
     
-        unsigned int getMonth();
-        unsigned int getDay();
-        unsigned int getYear();
+        unsigned int getMonth() const;
+        unsigned int getDay() const;
+        unsigned int getYear() const;
     private:
         unsigned int month{1};
         unsigned int day{1};

@@ -13,8 +13,8 @@ class Event{
         Date getEventDate();
         void setEventTime(Time);
         Time getEventTime();
-        void setEventTittle(string);
-        string getEventTittle();
+        void setEventTitle(string);
+        string getEventTitle();
         string toString();
     private:
         Date eventDay;

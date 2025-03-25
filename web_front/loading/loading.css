@@ -1,42 +1,42 @@
-/* 定義動畫：控制整體文字的顏色變化 */
+
 @keyframes loading08-parent {
   0%, 35%, 100% {
-    color: rgba(0, 0, 0, 0.2); /* 初始與結束時顏色較淡 */
+    color: rgba(0, 0, 0, 0.2); 
   }
   60%, 80% {
-    color: #fff; /* 中間過程變為白色 */
+    color: #fff; 
   }
 }
 
-/* 定義動畫：控制後續文字的顯示與隱藏 */
+
 @keyframes loading08-child {
   0% {
-    opacity: 1; /* 初始時可見 */
+    opacity: 1;
   }
   25%, 100% {
-    opacity: 0; /* 25% 後開始隱藏 */
+    opacity: 0;
   }
 }
 
-/* 主樣式，適用於 .loading08 下的 span */
+
 .loading08 span {
   position: relative;
-  color: rgba(0, 0, 0, 0.2); /* 設定初始顏色 */
-  animation: loading08-parent 5s infinite; /* 套用動畫 */
+  color: rgba(0, 0, 0, 0.2); 
+  animation: loading08-parent 5s infinite;
 }
 
-/* 設定 span 內部的偽元素 ::after 來顯示動畫效果 */
+
 .loading08 span::after {
   position: absolute;
   top: 0;
   left: 0;
-  content: attr(data-text); /* 取用 data-text 屬性中的內容 */
-  color: #fff; /* 設定為白色 */
-  opacity: 0; /* 預設為透明 */
-  animation: loading08-child 5s infinite; /* 套用動畫效果 */
+  content: attr(data-text); 
+  color: #fff; 
+  opacity: 0; 
+  animation: loading08-child 5s infinite; 
 }
 
-/* 針對 span 的不同順序，延遲動畫播放時間 */
+
 .loading08 span:nth-child(2)::after { animation-delay: 0.2s; }
 .loading08 span:nth-child(3)::after { animation-delay: 0.4s; }
 .loading08 span:nth-child(4)::after { animation-delay: 0.6s; }
