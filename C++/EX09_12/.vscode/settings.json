@@ -1,7 +1,7 @@
 {
-  "C_Cpp_Runner.cCompilerPath": "clang",
-  "C_Cpp_Runner.cppCompilerPath": "clang++",
-  "C_Cpp_Runner.debuggerPath": "lldb",
+  "C_Cpp_Runner.cCompilerPath": "gcc",
+  "C_Cpp_Runner.cppCompilerPath": "g++",
+  "C_Cpp_Runner.debuggerPath": "gdb",
   "C_Cpp_Runner.cStandard": "",
   "C_Cpp_Runner.cppStandard": "",
   "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat",
@@ -57,7 +57,10 @@
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
   "files.associations": {
-    "ostream": "cpp",
+    "*.tcc": "cpp",
+    "memory_resource": "cpp",
+    "memory": "cpp",
+    "type_traits": "cpp",
     "stdexcept": "cpp"
   }
 }
