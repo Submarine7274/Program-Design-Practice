@@ -1,0 +1,63 @@
+body{
+    background-color: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.login-area{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: rgba(255,255,255,0.13);
+    border: 2px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 40px rgba(8,7,16,0.6);
+    height: auto;
+    width: 300px;
+    border-radius: 12px;
+}
+.login-area *{
+    font-family: 'Poppins',sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    outline: none;
+    border: none;
+}
+.account-area,.password-area{
+    margin-bottom: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1,1,auto;
+    display: flex;
+    flex-direction: column;
+}
+.accout-text,.password-text{
+    text-align: left;
+    width: 100%;
+}
+.account-area{
+    
+    
+}
+.password-area{
+
+}
+.input-account, .input-password{
+    color: #000;
+    padding: 10px;
+    margin-top: 5px;
+    border:none;
+    border-bottom: 2px solid #000;
+    border-radius: 8px;
+    width: 100%;  
+}
+.sent-login-data{
+    color: #000;
+    background-color: #fff;
+    border-radius: 8px;
+    width: 100%; 
+    padding: 12px;
+    margin-top: 10px;
+}
