@@ -8,6 +8,7 @@
 </head>
 <body>
     <div class="login-area">
+        <h3>Login</h3>
         <div class="account-area">
             <div class="account-text">Account</div>
             <input class="input-account" placeholder="請輸入帳號" type="text">
@@ -16,6 +17,10 @@
             <div class="password-text">Password</div>
             <input class="input-password" placeholder="請輸入密碼" type="password">
         </div>
+        <div class="verify-area">
+            <canvas class="canvasClass" id="verifycode"></canvas>
+        <input type="text" class="input-verifycode" placeholder="請輸入驗證碼">
+        </div>       
         <button class="sent-login-data">登入</button>
     </div>
     <script src="loginpage.js"></script>
