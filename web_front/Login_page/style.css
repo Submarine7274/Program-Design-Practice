@@ -11,9 +11,7 @@ body{
     background-repeat: no-repeat; 
     /* background-size: cover; */
     background-position: 36vw 20vh;
-
     /* background-position: calc(100vw - 980px) calc(100vh - 600px); */
-
 }
 .login-area{
     display: flex;
@@ -42,9 +40,11 @@ body{
     font-weight: 500;
     line-height: 42px;
     text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .account-area,.password-area{
-    margin-top: 30px;
+    /* margin-top: 5px; */
     font-size: 16px;
     font-weight: 500;
     justify-content: center;
@@ -81,9 +81,10 @@ body{
     margin: 20px 0 10px 0;
     font-size: 16px;
     line-height: 1.5;
-    margin-top: 30px;
+    margin-top: 10px;
     padding: auto;
     width: 73%;
+    margin-bottom: 20px;
 }
 .sent-login-data:hover{
     color: #fff;
@@ -97,11 +98,15 @@ body{
     border: none;
     display: block;
 }
+.input-verifycode{
+    margin-top: 0%;
+    margin-left: 5px;
+}
 
 .verify-area,
 .account-area,
 .password-area{
-    margin-top: 30px;
+    margin-top: 10px;
     font-size: 16px;
     font-weight: 500;
     justify-content: center;
@@ -114,11 +119,13 @@ body{
     display: flex;
     flex-direction: row;
     padding: 10px;
+    /*元素大小寫在父元素*/
+    margin: 5px;
 }
 
 .canvasClass{
-    width: 150px;
-    height: 50px;
-    transform: scale(0.8);
+    width: 126px;
+    height: 44px;
+    /* transform: scale(0.8); */
     border-radius: 8px;
 }
