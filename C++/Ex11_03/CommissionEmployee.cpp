@@ -1,10 +1,11 @@
+// Fig. 11.5: CommissionEmployee.cpp
 // Class CommissionEmployee member-function definitions.
-#include <iostream>
+#include <iomanip>
 #include <stdexcept>
 #include <sstream>
-#include <iomanip>
 #include "CommissionEmployee.h" // CommissionEmployee class definition
 using namespace std;
+
 // constructor                                                        
 CommissionEmployee::CommissionEmployee(const string& first,
    const string& last, const string& ssn, double sales, double rate) {
@@ -82,11 +83,3 @@ string CommissionEmployee::toString() const {
       << "\ncommission rate: " << commissionRate;
    return output.str();
 }
-
-void CommissionEmployee::print() const                            
-{                                                                 
-   cout << "commission employee: " << getFirstName() << ' ' << getLastName()
-      << "\nsocial security number: " << getSocialSecurityNumber()     
-      << "\ngross sales: " << getGrossSales()                          
-      << "\ncommission rate: " << getCommissionRate();                 
-} // end function print

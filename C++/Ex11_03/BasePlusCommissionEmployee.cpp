@@ -1,50 +1,50 @@
-// Member-function definitions of class BasePlusCommissionEmployee 
-// using composition.
-#include <iostream>
+// Fig. 11.8: BasePlusCommissionEmployee.cpp
+// Class BasePlusCommissionEmployee member-function definitions.
+#include <iomanip>
 #include <stdexcept>
 #include <sstream>
-#include <iomanip>
-#include "CommissionEmployee.h"
-// BasePlusCommissionEmployee class definition
 #include "BasePlusCommissionEmployee.h"
-
 using namespace std;
 
+// constructor
 BasePlusCommissionEmployee::BasePlusCommissionEmployee(
    const string& first, const string& last, const string& ssn,
-   double sales, double rate, double salary): commissionEmployee(first, last, ssn, sales, rate) 
-{
- setBaseSalary(salary);
+   double sales, double rate, double salary) {
+   firstName = first; // should validate
+   lastName = last; // should validate
+   socialSecurityNumber = ssn; // should validate
+   setGrossSales(sales); // validate and store gross sales
+   setCommissionRate(rate); // validate and store commission rate
+   setBaseSalary(salary); // validate and store base salary
 }
 
 // set first name
-void BasePlusCommissionEmployee::setFirstName(const string &first) {
-   commissionEmployee.setFirstName(first);
+void BasePlusCommissionEmployee::setFirstName(const string& first) {
+   firstName = first; // should validate
 }
 
 // return first name
 string BasePlusCommissionEmployee::getFirstName() const {
-   return commissionEmployee.getFirstName();
+   return firstName;
 }
 
 // set last name
 void BasePlusCommissionEmployee::setLastName(const string& last) {
-   commissionEmployee.setLastName(last);
+   lastName = last; // should validate
 }
 
 // return last name
-string BasePlusCommissionEmployee::getLastName() const {
-   return commissionEmployee.getLastName();
-}
+string BasePlusCommissionEmployee::getLastName() const { return lastName; }
 
 // set social security number
-void BasePlusCommissionEmployee::setSocialSecurityNumber(const string &ssn) {
-   commissionEmployee.setSocialSecurityNumber(ssn);
+void BasePlusCommissionEmployee::setSocialSecurityNumber(
+   const string& ssn) {
+   socialSecurityNumber = ssn; // should validate
 }
 
 // return social security number
 string BasePlusCommissionEmployee::getSocialSecurityNumber() const {
-   return commissionEmployee.getSocialSecurityNumber();
+   return socialSecurityNumber;
 }
 
 // set gross sales amount
@@ -53,12 +53,12 @@ void BasePlusCommissionEmployee::setGrossSales(double sales) {
       throw invalid_argument("Gross sales must be >= 0.0");
    }
 
-   commissionEmployee.setGrossSales(sales);
+   grossSales = sales;
 }
 
 // return gross sales amount
 double BasePlusCommissionEmployee::getGrossSales() const {
-   return commissionEmployee.getGrossSales();
+   return grossSales;
 }
 
 // set commission rate
@@ -91,7 +91,7 @@ double BasePlusCommissionEmployee::getBaseSalary() const {
 
 // calculate earnings                                
 double BasePlusCommissionEmployee::earnings() const {
-   return getBaseSalary() + commissionEmployee.earnings();
+   return baseSalary + (commissionRate * grossSales);
 }
 
 // return string representation of BasePlusCommissionEmployee object     
@@ -105,11 +105,3 @@ string BasePlusCommissionEmployee::toString() const {
       << "\nbase salary: " << baseSalary;
    return output.str();
 }
- void BasePlusCommissionEmployee::print() const
-	{
-		cout << "base-salaried ";
-		
-		commissionEmployee.print();
-		
-		cout << "\nbase salry: " << getBaseSalary();
-	}
