@@ -4,6 +4,7 @@
 #include<string>
 using namespace std;
 /*這個constructor看起來有點長
+string的部分我用reference的方式，這樣就不用傳入值再複製一份給constructor(call by reference),可以去查call by value跟call by refernce的差別
 基本上就是把字串的部分直接用member initializer 然後檢查郵遞區號跟重量與運費有沒有符合(郵遞區號不為0，重量跟運費大於0)
 */
 Package::Package(const string& newSenderName,
@@ -20,22 +21,19 @@ Package::Package(const string& newSenderName,
     double newCostPerOunce)
     :senderName{newSenderName},senderAddress{newSenderAddress},senderCity{newSenderCity},senderState{newSenderState},
     recipientName{newRecipientName},recipientAddress{newRecipientAddress},recipientCity{newRecipientCity},recipientState{newRecipientState}
-    {
+    {   //因為要判斷的東西比較多，所以採用提早throw的方式，避免影響效能，只要有錯誤，就直接throw，沒錯才會繼續下去
         if(newSenderZIPCode==0){
             throw invalid_argument("SenderZIPCode should not be 0.");
         }
         if(newRecipientZIPCode==0){
-            
             throw invalid_argument("RecipientZIPCode should not be 0.");
         }
         if(newWeight<=0){
             throw invalid_argument("Weight should largger than 0.");
-            
         }
         if(newCostPerOunce<=0){
             throw invalid_argument("Cost per ounce should not be free.");            
         }
-        //因為要判斷的東西比較多，所以採用提早throw的方式，避免影響效能，只要有錯誤，就直接throw，沒錯才會繼續下去
         setRecipientZIPCode(newRecipientZIPCode);
         setSenderZIPCode(newSenderZIPCode);
         setWeight(newWeight);
@@ -97,9 +95,7 @@ void Package:: setWeight(double newWeight){
     if(newWeight<=0){
         throw invalid_argument("Weight should largger than 0.");
     }
-    else{
-        weight = newWeight;
-    }
+    weight = newWeight;
 }
 double Package:: getWeight(){return weight;}
 
@@ -107,13 +103,9 @@ void Package:: setCostPerOunce(double newCost){
     if(newCost<=0){
         throw invalid_argument("Cost should not be free.");
     }
-    else{
         costPerOunce = newCost;
-    }
 }
 double Package:: getCostPerOunce(){return costPerOunce;}
-
-
 double Package:: calculateCost(){
     return getWeight()*getCostPerOunce();
 }
