@@ -23,7 +23,7 @@ class Package{
 
     double weight;
     double costPerOunce;
-//有多少datamember 就要有多少set 跟get的function
+//有多少data member 就要有多少set 跟get的function
     public:
     Package(const string&,const string&,const string&,const string&,unsigned int,const string&,const string&,const string&,const string&,unsigned int,double,double);
     void setSenderName(const string&);

@@ -101,7 +101,7 @@ double Package:: getWeight(){return weight;}
 
 void Package:: setCostPerOunce(double newCost){
     if(newCost<=0){
-        throw invalid_argument("Cost should not be free.");
+        throw invalid_argument("Cost should not be free or less than 0.");
     }
         costPerOunce = newCost;
 }
@@ -112,7 +112,7 @@ double Package:: calculateCost(){
 //toString()的寫法參考就好 反正輸出長怎樣自己喜歡即可
 string Package:: toString(){
     ostringstream output;
-    output<<"Sender's name:"<<getSenderName()
+    output<<"\nSender's name:"<<getSenderName()
     <<"\nSender's address:"<<getSenderAddress()
     <<"\nSender's city:"<<getSenderCity()
     <<"\nSender's state:"<<getSenderState()

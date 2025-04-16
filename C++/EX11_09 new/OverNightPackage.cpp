@@ -36,7 +36,7 @@ double OvernightPackage::calculateCost(){
 }
 string OvernightPackage::toString(){
     ostringstream output;
-    output<<"Sender's name:"<<getSenderName()
+    output<<"\nSender's name:"<<getSenderName()
     <<"\nSender's address:"<<getSenderAddress()
     <<"\nSender's city:"<<getSenderCity()
     <<"\nSender's state:"<<getSenderState()
