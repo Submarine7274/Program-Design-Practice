@@ -6,6 +6,14 @@ using namespace std;
 /*這個constructor看起來有點長
 string的部分我用reference的方式，這樣就不用傳入值再複製一份給constructor(call by reference),可以去查call by value跟call by refernce的差別
 基本上就是把字串的部分直接用member initializer 然後檢查郵遞區號跟重量與運費有沒有符合(郵遞區號不為0，重量跟運費大於0)
+member initializer就是
+ClassName::ClassName(參數列表)
+    : 資料成員1(初值), 資料成員2(初值), 資料成員3(初值)
+{
+    // constructor 本體
+}
+    好處是在建立物件的同時，直接賦值，而不是先建立物件後賦值，通常用於不用資料檢查的data member，而且對於const成員跟reference成員，一定要用member initializer
+    因為const不能被修改，只能在建立時就設定好數值，reference是綁定某個變數的位置，所以也一定要在一開始就初始
 */
 Package::Package(const string& newSenderName,
     const string& newSenderAddress,
@@ -21,24 +29,12 @@ Package::Package(const string& newSenderName,
     double newCostPerOunce)
     :senderName{newSenderName},senderAddress{newSenderAddress},senderCity{newSenderCity},senderState{newSenderState},
     recipientName{newRecipientName},recipientAddress{newRecipientAddress},recipientCity{newRecipientCity},recipientState{newRecipientState}
-    {   //因為要判斷的東西比較多，所以採用提早throw的方式，避免影響效能，只要有錯誤，就直接throw，沒錯才會繼續下去
-        if(newSenderZIPCode==0){
-            throw invalid_argument("SenderZIPCode should not be 0.");
-        }
-        if(newRecipientZIPCode==0){
-            throw invalid_argument("RecipientZIPCode should not be 0.");
-        }
-        if(newWeight<=0){
-            throw invalid_argument("Weight should largger than 0.");
-        }
-        if(newCostPerOunce<=0){
-            throw invalid_argument("Cost per ounce should not be free.");            
-        }
-        setRecipientZIPCode(newRecipientZIPCode);
-        setSenderZIPCode(newSenderZIPCode);
-        setWeight(newWeight);
-        setCostPerOunce(newCostPerOunce);
-}
+    {   //我們把資料檢查的部分，都交給set來執行，這邊直接呼叫就好
+        setRecipientZIPCode(newRecipientZIPCode);       //設定收件人郵遞區號
+        setSenderZIPCode(newSenderZIPCode);             //設定寄件人郵遞區號
+        setWeight(newWeight);               //設定包裹重量
+        setCostPerOunce(newCostPerOunce);       //設定運費
+    }
 //這邊是寄件者的set跟get
 void Package::setSenderName(const string& newSenderName){
     senderName = newSenderName;
@@ -58,6 +54,7 @@ void Package:: setSenderZIPCode(int newSenderZIPCode){
     }
     senderZIPCode = newSenderZIPCode;
 }
+//因為程式比較長，我get的寫法寫成一行文
 string Package:: getSenderName(){return senderName;}
 string Package:: getSenderAddress(){return senderAddress;}
 string Package:: getSenderCity(){return senderCity;}
