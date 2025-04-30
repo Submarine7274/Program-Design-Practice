@@ -14,5 +14,5 @@ void SavingAccount::setInterestRate(double newInterestRate){
     interestRate = newInterestRate;
 }
 double SavingAccount::calculateInterest(){
-    return getBalance()*getInterestRate();
+    return Account::getBalance()*getInterestRate();
 }

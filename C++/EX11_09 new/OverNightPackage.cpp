@@ -19,10 +19,7 @@ OvernightPackage::OvernightPackage(const string& newSenderName,
     double newOvernightDeliveryFee)
     :Package(newSenderName,newSenderAddress,newSenderCity,newSenderState,newSenderZIPCode,newRecipientName,newRecipientAddress,newRecipientCity,newRecipientState,newRecipientZIPCode,newWeight,newCostPerOunce)
     {
-        if(newOvernightDeliveryFee<0){
-            throw invalid_argument("Overnight deliver fee must lagger than 0.");
-        }
-        setOvernightDeliveryFee(newOvernightDeliveryFee);
+        setOvernightDeliveryFee(newOvernightDeliveryFee);           //一樣把資料檢查交給set檢查
 }
 void OvernightPackage::setOvernightDeliveryFee(double newOvernightDeliveryFee){
     if(newOvernightDeliveryFee<0){
@@ -32,8 +29,9 @@ void OvernightPackage::setOvernightDeliveryFee(double newOvernightDeliveryFee){
 }
 double OvernightPackage::getOvernightDeliveryFee(){return overnightDeliveryFee;}
 double OvernightPackage::calculateCost(){
-    return (getOvernightDeliveryFee()+getCostPerOunce())*getWeight();
+    return (getOvernightDeliveryFee()+getCostPerOunce())*getWeight();           //連夜運送費是直接加在運費上的 (運費+連夜運送費)*重量
 }
+/*因為字串的順序有改變，所以我這邊不呼叫package的toString來串接*/
 string OvernightPackage::toString(){
     ostringstream output;
     output<<"\nSender's name:"<<getSenderName()

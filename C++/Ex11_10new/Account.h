@@ -9,6 +9,6 @@ class Account{
     void credit(double);        //存款
     bool debit(double);         //提款 因應後面的題目需求 回傳bool值
     double getBalance();        //餘額查詢
-    //還沒寫set
+    void setBalance(double);          //理論上是只能存款跟提款，但這邊也提供set
 };
 #endif

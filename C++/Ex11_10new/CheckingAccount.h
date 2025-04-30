@@ -6,13 +6,12 @@
 class CheckingAccount:public Account{
 private:
     double transactionFee;
-    //寫一個功能性function 用Account 的set 把手續費跟餘額寫回去
+    void chargeFee();
 public:
     CheckingAccount(double,double);     //第一個參數是餘額，第二個參數是手續費
-    void credit(double);
+    void credit(double);        
     void debit(double);
-    double getTransactionFee();
+    double getTransactionFee();         //其實這邊已經用chargeFee()這個功能性function實作了收手續費的動作，但我還是為了手續費寫了getter跟setter
     void setTransactionFee(double);
-
 };
 #endif

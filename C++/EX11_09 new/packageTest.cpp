@@ -9,8 +9,9 @@ int main(void){
     Package package1{"Grace","NTCU","Taichung","Taiwan",400,"Alice","NYCU","Hsinchu","Taiwan",300,705.5,7.25};
     TwoDayPackage package2{"Lisa","NTCU","Taichung","Taiwan",400,"Cathy","NTU","Taipei","Taiwan",100,300,7.25,100};
     OvernightPackage package3{"Bianca","NTCU","Taichung","Taiwn",400,"Amily","NCKU","Tainan","Taiwan",700,400,7.25,1.25};
+    //建三個不同class的包裹
    
-    cout<<fixed<<setprecision(2);   //設定小數點後兩位
+    cout<<fixed<<setprecision(2);       //設定小數點後兩位
     cout<<package1.toString()<<endl;      //把package1的東西輸出
     cout<<package2.toString()<<endl;
     cout<<package3.toString()<<endl;

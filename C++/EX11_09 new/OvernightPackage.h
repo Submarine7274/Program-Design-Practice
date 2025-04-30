@@ -1,3 +1,5 @@
+/*速件(Overnightpackage)繼承了package 多了連夜運送費，
+連夜運送費是直接加在運費上的 (運費+連夜運送費)*重量*/
 #ifndef OVERNIGHTPACKAGE_H
 #define OVERNIGHTPACKAGE_H
 #include"package.h"

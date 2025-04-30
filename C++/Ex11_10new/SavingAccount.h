@@ -6,9 +6,9 @@ class SavingAccount:public Account{
     private:
     double interestRate;        //利率
     public:
+    SavingAccount(double,double);       //第一個參數是初始利率 第二個是利率
     double getInterestRate();
     void setInterestRate(double);
-    SavingAccount(double,double);       //第一個參數是初始利率 第二個是利率
     double calculateInterest();         //計算利率
 };
 #endif

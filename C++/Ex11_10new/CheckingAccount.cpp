@@ -6,14 +6,21 @@ CheckingAccount::CheckingAccount(double newbalance,double newtransactionFee)
 {
     setTransactionFee(newtransactionFee);
 }
+void CheckingAccount::chargeFee(){
+    Account::setBalance(Account::getBalance()-getTransactionFee());
+}
 void CheckingAccount::credit(double ammount){
     Account::credit(ammount -getTransactionFee());
 }
 void CheckingAccount::debit(double ammount){
-    if(Account::debit(ammount +getTransactionFee()) ==0){       //如果提款金額加上手續費 超過餘額的話
-        throw invalid_argument("");     //因為在Account已經有cout原因了 這邊就直接輸出空白
+    if(Account::getBalance()<(ammount+getTransactionFee())){       //如果提款金額加上手續費 超過餘額的話
+        throw invalid_argument("Not enough balance.");
     }
-    Account::debit(ammount +getTransactionFee());       //如果餘額可以負擔提款跟手續費的話 就可以正常執行
+    if(ammount <0){
+        throw invalid_argument("Can not debit negative number.");
+    }
+    Account::debit(ammount);       //如果餘額可以負擔提款跟手續費的話 就可以正常執行
+    chargeFee();            //收手續費
 }
 double CheckingAccount::getTransactionFee(){return transactionFee;}
 void CheckingAccount::setTransactionFee(double newtransactionfee){

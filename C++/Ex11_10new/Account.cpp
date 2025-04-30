@@ -4,13 +4,16 @@
 using namespace std;
 Account::Account(double newBalance):balance(0.0)
 {
+    setBalance(newBalance);
+}
+double Account::getBalance(){return balance;}
+void Account::setBalance(double newBalance){
     if(newBalance <0){
         balance = 0;
         throw invalid_argument("Balance should not less than 0.");
     }
     balance = newBalance;
 }
-double Account::getBalance(){return balance;}
 void Account::credit(double amount){
     if(amount <0){
         throw invalid_argument("Credit should not less than 0.");
