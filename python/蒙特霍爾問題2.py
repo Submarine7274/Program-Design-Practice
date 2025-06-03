@@ -9,7 +9,7 @@ results = {
 }
 
 for _ in range(trials):
-    doors = [0, 1, 2, 3, 4]
+    doors = [0, 1, 2, 3]
     prize = random.choice(doors)
 
     # A、B最初選不同門
