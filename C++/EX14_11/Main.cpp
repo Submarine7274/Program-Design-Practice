@@ -5,7 +5,7 @@
 using namespace std;
 enum class Choice{PRINT = 1,UPDATE,NEW,DELETE,END};
 Choice enterChoice();
-void createDatFile(fstream&);
+void createTextFile(fstream&);
 void updateDateInventory(fstream&);
 void newItem(fstream&);
 void deleteItem(fstream&);
@@ -23,7 +23,7 @@ int main(void){
         switch (inputChoice)
         {
         case Choice::PRINT:
-            createDatFile(inOutInventory);
+            createTextFile(inOutInventory);
             break;
         case Choice::UPDATE:
             updateDateInventory(inOutInventory);
@@ -39,6 +39,7 @@ int main(void){
             break;
         }
     }
+    inOutInventory.clear();
 }
 Choice enterChoice(){
        cout << "\nEnter a choice\n" 
@@ -59,3 +60,43 @@ int getItem(const char* const prompt){
     }while(itemNumber<1||itemNumber >100);
     return itemNumber;
 }
+void createTextFile(fstream& readFromFile){
+    ofstream outPrintFile("print.txt",ios::out);
+    if(!outPrintFile){
+        cerr<<"Error while creating file."<<endl;
+        exit(EXIT_FAILURE);
+    }
+    outPrintFile<<left<<setw(10)<<"Record#"
+    <<setw(30)<<"Tool Name"<<setw(12)<<right<<fixed<<"Cost"<<endl;
+    readFromFile.seekg(0);
+    Inventory tool;
+    readFromFile.read(reinterpret_cast<char*>(&tool),sizeof(Inventory));
+    //reinterpret_cast是為了將物件轉換成byte的位元組，char*正是一連串的位元組
+    //為什麼會需要reinterpret_cast？因為read()跟write()只支援以byte計算的位元組 所以要從Inventory*轉型成char*的型態
+    //先用&tool拿到位址，然後用reinterpret_cast<char*>來以這個當作byte(位元組)起點
+    //read()的原型是read(char* s,streamsize n),意思是從檔案讀取n個byte 放在s作為起點的位址
+    while(!readFromFile.eof()){
+        if(tool.getRecordNumber()!=0){
+            outputLine(outPrintFile,tool);
+        }
+        readFromFile.read(reinterpret_cast<char*>(&tool),sizeof(Inventory));
+    }
+}
+void updateDateInventory(fstream& updateFile){
+    int recordNumber{getItem("Enter a item to update.")};
+    updateFile.seekg(recordNumber*sizeof(Inventory));
+    Inventory tool;
+    updateFile.read(reinterpret_cast<char*>(&tool),sizeof(Inventory));
+    if(tool.getRecordNumber()!= 0){
+        outputLine(cout,tool);
+        int quantity;
+        cin>>quantity;
+
+        int oldQuantity;
+        oldQuantity = tool.getQuantity();
+        tool.setQuantity(oldQuantity+quantity);
+    }
+}
+void newItem(fstream&);
+void deleteItem(fstream&);
+void outputLine(ostream&,const Inventory&);
