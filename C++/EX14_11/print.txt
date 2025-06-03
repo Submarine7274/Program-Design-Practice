@@ -1,0 +1,2 @@
+Record#   Tool Name                             Cost    Quantity
+1         Hammer                               50.00         100
