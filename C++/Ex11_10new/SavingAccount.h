@@ -7,6 +7,7 @@ class SavingAccount:public Account{
     double interestRate;        //利率
     public:
     SavingAccount(double,double);       //第一個參數是初始利率 第二個是利率
+    virtual ~SavingAccount() =default;
     double getInterestRate();
     void setInterestRate(double);
     double calculateInterest();         //計算利率
