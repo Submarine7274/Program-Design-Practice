@@ -1,0 +1,8 @@
+print("請輸入你的姓名：")
+name = input()
+print("請輸入你的身高(cm):")
+height = input()
+print("請輸入你的體重(kg):")
+weight = input()
+bmi = float(weight) / ((float(height)/100) ** 2)
+print(f"{name}，你的BMI值為：{bmi:.2f}")
