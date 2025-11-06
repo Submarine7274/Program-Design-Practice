@@ -12,11 +12,38 @@ const int PUZZLE_SIZE = 25;
 struct Puzzle{
     vector<vector<int>> col_rules;
     vector<vector<int>> row_rules;
+    vector<vector<int>> grid; // -1 = u, 0 = blank, 1 = black
     Puzzle(){
         col_rules.resize(PUZZLE_SIZE);
         row_rules.resize(PUZZLE_SIZE);
+        grid.resize(PUZZLE_SIZE, vector<int>(PUZZLE_SIZE, -1));
     }
 };
+
+bool fix(int i, int j){
+    if(i == 0 && j == 0){
+        return true;
+    }
+    if(i ==0&&j>0){
+        return false;
+    }
+    //fix0(i,j) fix1(i,j)
+    bool canFix0 = fix0(i,j);
+    bool canFix1 = fix1(i,j);
+    return canFix0 || canFix1;
+}
+bool fix0(int i,int j){
+    if(i>0){
+        return fix(i-1,j);
+    }
+    return false;
+}
+bool fix1(int i, int j){
+    if(i>0 && j>0){
+        return fix(i-1,j-1);
+    }
+    return false;
+}
 
 vector<int> parse_a_clue_line(const string& line){
     vector<int> clues;
