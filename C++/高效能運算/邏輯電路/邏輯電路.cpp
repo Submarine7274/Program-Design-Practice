@@ -1,9 +1,11 @@
 #include<iostream>
+#include <chrono>
 #ifndef BIT_signalValue
 #define BIT_signalValue(n, i) ( ( n & ( 1 << i ) ) ? 1 : 0 )
 #endif
-using namespace std;
+
 bool check_circuit(int id, int input_digits){
+    using namespace std;
     bool signal[input_digits];
     for (int i = 0; i < input_digits; i++){
         signal[i] = BIT_signalValue(id, i);
@@ -40,15 +42,21 @@ bool check_circuit(int id, int input_digits){
         cout << signal[i];
     }
     cout << endl;
-    return 1;// 16 個條件都通過 → return 1
+    return 1;
 }
+
 int main(){
+    using namespace std;
     short count=0;
+    auto start = std::chrono::high_resolution_clock::now();
     for (int id = 0; id < 65536; id++){
         if (check_circuit(id, 16)){
             count++;
         }
     }
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     cout << "Total: " << count << " solutions." <<  endl;
+    cout << "Time taken: " << duration.count() * 1e-9 << " seconds." << endl;
     return 0;
 }
