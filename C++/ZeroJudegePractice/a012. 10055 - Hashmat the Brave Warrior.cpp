@@ -1,14 +1,26 @@
-#include <iostream>
-using namespace std;
-int main (void){
-    long long a,b;
-    while(cin>>a>>b){
-        if(a-b>0){
-            cout<<a-b<<endl;
-        }
-        else{
-            cout<<b-a<<endl;
-        }
+/* Hashmat是一個勇敢的將領，他帶著年輕的士兵從這個城市移動到另一個城市與敵人對抗。在打仗之前他會計算己方與敵方士兵的數目差距，來決定是要開打或不開打。Hashmat的士兵數絕不會比敵人的士兵數大。
+
+輸入說明
+每組測試資料1列，有2個整數，代表Hashmat及敵人的士兵數或反之。這些數不會超過263。
+
+輸出說明
+對每組測試資料請輸出Hashmat與敵人士兵數目的差（正數）。
+
+範例輸入 #1
+10 12
+14 10
+範例輸出 #1
+2
+4 */
+#include<iostream>
+#include<cmath>
+int main(){
+    using namespace std;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    long long Hashmat=0,enemy=0;
+    while(cin>>Hashmat>>enemy){
+        cout<<abs(Hashmat-enemy)<<endl;
     }
     return 0;
 }
