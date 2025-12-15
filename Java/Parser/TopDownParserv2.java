@@ -167,6 +167,12 @@ public class TopDownParserv2{
         }
         return isChanged;
     }
+    private static Set<String> findAFollowSet(Grammar grammar, List<String> beta){
+        Set<String>firstOfBeta = findAFirstSet(grammar, beta);//follow set是找後面那個字的first set
+        Set<String> result = new HashSet<>(firstOfBeta);
+        result.remove(lambda);
+        return result;
+    }
     public static void main(String[] args){//main
         Scanner sc = new Scanner(System.in);//等等要讀輸入指令
         try {
