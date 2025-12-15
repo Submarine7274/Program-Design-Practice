@@ -1,0 +1,9 @@
+Start > S
+S > id assign A semi
+A > Pre E
+Pre > Pre id assign
+| L
+E > E plus P
+| P
+P > id
+| lp A rp

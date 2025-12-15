@@ -1,0 +1,8 @@
+1 Start > S
+2 S > id assign A semi
+3 A > id assign A
+4 | E
+5 E > E plus P
+6 | P
+7 P > id
+8 | lp A rp

@@ -1,0 +1,12 @@
+微軟MPI:
+編譯:
+gcc 程式碼.cpp -o 輸出檔名 -I $MSMPI_INC -L $MSMPI_LIB64 -l msmpi
+
+執行
+mpiexec -n 處理器數量 檔名.exe
+
+openMPI:
+編譯:
+mpic++ 程式碼.cpp -o 輸出檔名
+執行:
+mpirun -np 處理器數量 ./檔名
