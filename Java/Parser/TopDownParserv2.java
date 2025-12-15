@@ -30,6 +30,7 @@ public class TopDownParserv2{
         
         Map<String, Set<String>> firstSets;
         Map<String, Set<String>> followSets;
+        Map<Integer,Set<String>> predictSets;
         Map<String, Map<String, Production>> parseTable;
         
         boolean hasConflict = false; //檢查CFG本身有沒有衝突
@@ -40,6 +41,7 @@ public class TopDownParserv2{
             nonTerminals = new LinkedHashSet<>(); //用LinkedHashSet是為了保持順序
             firstSets = new HashMap<>();
             followSets = new HashMap<>();
+            predictSets = new TreeMap<>();
             parseTable = new HashMap<>();
         }
     }
@@ -167,11 +169,92 @@ public class TopDownParserv2{
         }
         return isChanged;
     }
-    private static Set<String> findAFollowSet(Grammar grammar, List<String> beta){
+    private static Set<String> findAFollowSet_firstSetWithOutLambda(Grammar grammar, List<String> beta){
         Set<String>firstOfBeta = findAFirstSet(grammar, beta);//follow set是找後面那個字的first set
-        Set<String> result = new HashSet<>(firstOfBeta);
-        result.remove(lambda);
+        Set<String> result = new HashSet<>(firstOfBeta);//把前面函式找到的放進去result
+        result.remove(lambda);//這邊不會包含L
         return result;
+    }
+    private static boolean findNewFollowSetOfLhs(Grammar grammar, String lhs){
+        boolean isChanged = false;
+        List<Production> rules = grammar.productions.get(lhs);//把這個lhs的規則放到list裡面
+        for(Production prod : rules){//把所有rule看過
+            List<String> rhs = prod.rhs;//先提取出rhs就好
+            for(int i = 0;i<rhs.size();i++){
+                String symbol = rhs.get(i);//等等要比對的symbol
+                if(!grammar.nonTerminals.contains(symbol)){//如果是terminal的話 就跳出這次迴圈 只需要考慮non-terminal
+                    continue;
+                }
+                Set<String> targetFollow = grammar.followSets.get(symbol);//這個non-terminal的follow set
+                int initialSize = targetFollow.size();//等等藉由比較size大小來決定有沒有新的follow set
+
+                List<String> beta = new ArrayList<>();
+                if(i +1< rhs.size()){//有後續的符號
+                    beta = rhs.subList(i+1, rhs.size());//beta就是i+1字串到剩下的字串
+                }
+                Set<String>firstOfBeta = findAFirstSet(grammar, beta);//這裡會包含L
+                targetFollow.addAll(findAFollowSet_firstSetWithOutLambda(grammar, beta));//這裡不包含L 函式會把L去掉
+                if(firstOfBeta.contains(lambda)||beta.isEmpty()){//如果beta的first set有lambda 或者beta字串後面是空的
+                    targetFollow.addAll(grammar.followSets.get(lhs));//那就要把那個lhs的follow set也放進去target的 follow set
+                }
+                if(targetFollow.size()>initialSize){//如果這個follow set的size比一開始大 代表有更動
+                    isChanged = true;
+                }
+            }
+        }
+        return isChanged;
+    }
+    public static void findAllFollowSets(Grammar grammar){
+        for(String nt: grammar.nonTerminals){//對所有的nonterminal 建立一個hashset
+            grammar.followSets.put(nt, new HashSet<>());
+        }
+        if(grammar.startSymbol!= null){//把start symbol的follow set加上$
+            grammar.followSets.get(grammar.startSymbol).add("$");
+        }
+        boolean isChanged = true;
+        while(isChanged){
+            isChanged = false;//預設這輪沒有更動
+            for(String lhs: grammar.nonTerminals){
+                if(findNewFollowSetOfLhs(grammar, lhs)){
+                    isChanged =true;
+                }
+            }
+        }
+    }
+    public static void findAllPredictSets(Grammar grammar){
+        for(String lhs:grammar.productions.keySet()){//所有的lhs就是production的key
+            for(Production prod: grammar.productions.get(lhs)){//所有的規則
+                Set<String> predict = new HashSet<>();
+                Set<String> firstOfRhs = findAFirstSet(grammar, prod.rhs);//先找這個規則rhs的first set
+                for(String s :firstOfRhs){//除了lambda以外的first set都放到predict set裡面
+                    if(!s.equals(lambda)){
+                        predict.add(s);
+                    }
+                }
+                if(firstOfRhs.contains(lambda)){
+                    Set<String> follow = grammar.followSets.get(lhs);
+                    if(follow !=null){//防禦性
+                        predict.addAll(follow);
+                    }
+                }
+                grammar.predictSets.put(prod.id,predict);
+            }
+        }
+    }
+    public static void buildParseTable(Grammar grammar){
+        for(String nt :grammar.nonTerminals){//把所有的non-terminal放進去HashMap裡面
+            grammar.parseTable.put(nt, new HashMap<>());
+        }
+        grammar.hasConflict =false;//初始化衝突的flag
+        for(String lhs: grammar.productions.keySet()){//所有的lhs
+            for(Production prod: grammar.productions.get(lhs)){//這個lhs的所有production
+                Set<String> predict = grammar.predictSets.get(prod.id);
+                if(predict ==null){//防禦性
+                    continue;
+                }
+                
+            }
+        }
     }
     public static void main(String[] args){//main
         Scanner sc = new Scanner(System.in);//等等要讀輸入指令
@@ -204,6 +287,18 @@ public class TopDownParserv2{
             findAllFirstSets(grammar);
             for (String nt : grammar.nonTerminals) {
                 System.out.println("FIRST(" + nt + ") = " + grammar.firstSets.get(nt));
+            }
+            System.out.println("\nFOLLOW Sets");
+            findAllFollowSets(grammar); 
+            for (String nt : grammar.nonTerminals) {
+                System.out.println("FOLLOW(" + nt + ") = " + grammar.followSets.get(nt));
+            }
+            System.out.println("\nPREDICT Sets (含規則 ID)");
+            findAllPredictSets(grammar);
+            for (Map.Entry<Integer, Set<String>> entry : grammar.predictSets.entrySet()) {
+                int id = entry.getKey();
+                Set<String> pSet = entry.getValue();
+                System.out.println("PREDICT(" + id + ") = " + pSet);
             }
             sc.close();
         } catch (IOException e) {
