@@ -246,15 +246,115 @@ public class TopDownParserv2{
             grammar.parseTable.put(nt, new HashMap<>());
         }
         grammar.hasConflict =false;//初始化衝突的flag
-        for(String lhs: grammar.productions.keySet()){//所有的lhs
+        for(String lhs: grammar.productions.keySet()){//所有的lhs底下的的每一條規則
             for(Production prod: grammar.productions.get(lhs)){//這個lhs的所有production
-                Set<String> predict = grammar.predictSets.get(prod.id);
+                Set<String> predict = grammar.predictSets.get(prod.id);//把所有這個規則的predict set拿出來
                 if(predict ==null){//防禦性
                     continue;
                 }
-                
+                for(String terminal :predict){//把predict set裡面的所有terminal 放進lhs terminal的位置
+                    Map<String,Production> row = grammar.parseTable.get(lhs);//Map中 non-terminal lhs對應的那一行
+                    if(row.containsKey(terminal)){//non-terminal 的那一列 已經有東西了 表示有衝突
+                        grammar.hasConflict =true;
+                    }
+                    else{
+                        row.put(terminal, prod);
+                    }
+                }
             }
         }
+        if(grammar.hasConflict){
+            System.out.println("\n建表失敗 LL(1)Parser Failed.");
+        }
+        else{
+            System.out.println("\n建表成功");
+        }
+    }
+
+    public static void printParseTable(Grammar grammar){//印出parse table
+        String formatSpace = "%-10s";
+        List<String> columnHeader = new ArrayList<>(grammar.terminals);//建立一個Array list放所有terminal
+        if(!columnHeader.contains("$")){//確保有$字號
+            columnHeader.add("$");
+        }
+        Collections.sort(columnHeader);
+        System.out.printf(formatSpace,"");
+        for (String t : columnHeader) {//印出欄header
+            System.out.printf(formatSpace,t);
+        }
+        System.out.println();
+        for(String nt :grammar.nonTerminals){
+            System.out.printf(formatSpace,nt);
+            Map<String, Production> row = grammar.parseTable.get(nt);//建立一個用non-terminal對應production的map
+            for(String t: columnHeader){
+                if(row!=null&&row.containsKey(t)){//如果這個row有包含這個terminal 
+                    System.out.printf(formatSpace,String.valueOf(row.get(t).id));
+                }
+                else{
+                    System.out.printf(formatSpace," ");
+                }
+            }
+            System.out.println();
+        }
+    }
+    public static void parseString(Grammar grammar, List<String> input){
+        Stack<String> stack = new Stack<>();//建立stack
+        stack.push("$");//結尾一定是$
+        stack.push(grammar.startSymbol);//startSymbol放進去
+        int index = 0;//看到第幾個字
+        List<Integer> apliedRules =new ArrayList<>();//套用的規則紀錄
+        System.out.println("\n--- Start Parsing ---");
+        System.out.printf("%-30s %-30s %s\n", "Stack", "Input", "Action");
+        while(!stack.isEmpty()){//stack要清空 才算結束
+            String top = stack.peek();//看stack的頂端 但不移除
+            String lookAhead;
+            if(index <input.size()){//如果目前讀到的index值比總長度小 表示input還有東西沒處理完
+                lookAhead = input.get(index);
+            }
+            else{
+                lookAhead = "$";//結尾都用$
+            }
+            String stackStr = String.join(" ", stack);//等等要輸出的字串
+            String inputStr = (index < input.size()) ? String.join(" ", input.subList(index, input.size())) : "$";//輸入的字串 切割並在結尾放上$
+            if(grammar.terminals.contains(top)||top.equals("$")){//如果stack 的top是terminal
+               if (top.equals(lookAhead)) {
+                    System.out.printf("%-30s %-30s Match %s\n", stackStr, inputStr, top);
+                    stack.pop();
+                    index++;
+                } else {//terminal不能配對
+                    System.out.printf("%-30s %-30s Error: Expected '%s' but got '%s'\n", stackStr, inputStr, top, lookAhead);
+                    return; 
+                }
+            }
+            else if (grammar.nonTerminals.contains(top)) {//top是non-terminal
+                Map<String, Production> row = grammar.parseTable.get(top);
+                Production prod = (row != null) ? row.get(lookAhead) : null;
+                if (prod != null) {// 成功查到規則
+                    System.out.printf("%-30s %-30s Apply Rule %d: %s\n", stackStr, inputStr, prod.id, prod.lhs + "->" + String.join(" ", prod.rhs));
+                    apliedRules.add(prod.id);
+                    stack.pop(); 
+                    List<String> rhs = prod.rhs;
+                    if (!(rhs.size() == 1 && rhs.get(0).equals(lambda))) {
+                        for (int i = rhs.size() - 1; i >= 0; i--) {
+                            stack.push(rhs.get(i));
+                        }
+                    }
+                }   
+                else {
+                    Set<String> expectedTokens = new TreeSet<>(); // 用 TreeSet 會自動排序
+                    if (row != null) {
+                        expectedTokens.addAll(row.keySet());
+                    }
+                    System.out.printf("%-30s %-30s Error: Expected one of %s but got '%s'\n", 
+                                      stackStr, inputStr, expectedTokens.toString(), lookAhead);
+                    return; 
+                }   
+            }
+        }
+        System.out.println("--- End Parsing ---");
+        System.out.print("Applied Rules: ");
+        for (int r : apliedRules) System.out.print(r + " ");
+        System.out.println("\nAccept");
     }
     public static void main(String[] args){//main
         Scanner sc = new Scanner(System.in);//等等要讀輸入指令
@@ -299,6 +399,28 @@ public class TopDownParserv2{
                 int id = entry.getKey();
                 Set<String> pSet = entry.getValue();
                 System.out.println("PREDICT(" + id + ") = " + pSet);
+            }
+            System.out.println("\nParse Table 建立");
+            buildParseTable(grammar);
+            System.out.println("\n[Parse Table Content]");
+            printParseTable(grammar);
+            while (true) {
+                System.out.print("\n請輸入 Token String (以空白分隔, 輸入 exit 離開): ");
+                String inputLine = sc.nextLine().trim();
+                if (inputLine.equalsIgnoreCase("exit")) {
+                    break;
+                }
+                if (inputLine.isEmpty()) continue;
+                List<String> inputTokens = new ArrayList<>(Arrays.asList(inputLine.split("\\s+")));// 把輸入字串切成 List
+                if (!inputTokens.get(inputTokens.size() - 1).equals("$")) {// 確保最後有 $
+                    inputTokens.add("$");
+                }
+                if (!grammar.hasConflict) {// 執行 Parser
+                    parseString(grammar, inputTokens);
+                } else {
+                    System.out.println("文法有衝突 Parser無法正確運作 已經準備好接受錯誤了嗎?");
+                    parseString(grammar, inputTokens);
+                }
             }
             sc.close();
         } catch (IOException e) {
