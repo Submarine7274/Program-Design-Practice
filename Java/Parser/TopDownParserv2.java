@@ -1,8 +1,8 @@
-/*
+/*第九組
     整個class叫做TopDownParserv2{
         裡面有一個class Production做為資料封裝
         Production裡面(){
-            用int存規格幾(行號)
+            用int存規則幾(行號)
             用字串存LHS 也就是Non-terminal
             用字串的List 存RHS 也就是Non-terminal derive 出來的東西
             有建構子()
@@ -89,10 +89,9 @@ public class TopDownParserv2{
             parseTable = new HashMap<>();
         }
     }
-
     public static Grammar readCFG(String filename) throws IOException{
         Grammar grammar = new Grammar();
-        //FileInputStream開檔 InputStreamReader換成char以及指定編碼UTF-8 BufferedReader可以用readLine()
+        //FileInputStream開檔 InputStreamReader換成char BufferedReader可以用readLine()
         BufferedReader br = new BufferedReader(new  InputStreamReader(new FileInputStream(filename)));
         String line;//半夜別打Line
         String currentLhs = null;//判斷目前lhs
@@ -152,7 +151,6 @@ public class TopDownParserv2{
         grammar.terminals.add("$");
         return grammar;
     }
-
     public static void findAllFirstSets(Grammar grammar){
         for(String nt: grammar.nonTerminals){//每個non-terminal都先給一個空的set
             grammar.firstSets.put(nt, new HashSet<>());
@@ -166,6 +164,18 @@ public class TopDownParserv2{
                 }
             }
         }
+    }
+    private static boolean findNewFirstSetsOfLhs(Grammar grammar, String lhs){
+        boolean isChanged =false;
+        List<Production> rules = grammar.productions.get(lhs);//拿出這個lhs所有的規則
+        if(rules ==null ){return false;}//防禦 如果non-terminal沒有定義規則 基本上不會出現
+        for(Production prod:rules){
+            Set<String> isAFirstSet = findAFirstSet(grammar, prod.rhs);//把右邊的規則丟進去找First set 存到List裡面
+            if(grammar.firstSets.get(lhs).addAll(isAFirstSet)){//把找到的所有first set 放到grammar的first set裡面
+                isChanged = true;
+            }
+        }
+        return isChanged;
     }
     private static Set<String> findAFirstSet(Grammar grammar,List<String> sequence){
         Set<String> result = new HashSet<>();
@@ -200,24 +210,22 @@ public class TopDownParserv2{
         }
         return result;
     }
-
-    private static boolean findNewFirstSetsOfLhs(Grammar grammar, String lhs){
-        boolean isChanged =false;
-        List<Production> rules = grammar.productions.get(lhs);//拿出這個lhs所有的規則
-        if(rules ==null ){return false;}//防禦 如果non-terminal沒有定義規則 基本上不會出現
-        for(Production prod:rules){
-            Set<String> isAFirstSet = findAFirstSet(grammar, prod.rhs);//把右邊的規則丟進去找First set 存到List裡面
-            if(grammar.firstSets.get(lhs).addAll(isAFirstSet)){//把找到的所有first set 放到grammar的first set裡面
-                isChanged = true;
+    public static void findAllFollowSets(Grammar grammar){
+        for(String nt: grammar.nonTerminals){//對所有的nonterminal 建立一個hashset
+            grammar.followSets.put(nt, new HashSet<>());
+        }
+        if(grammar.startSymbol!= null){//把start symbol的follow set加上$
+            grammar.followSets.get(grammar.startSymbol).add("$");
+        }
+        boolean isChanged = true;
+        while(isChanged){
+            isChanged = false;//預設這輪沒有更動
+            for(String lhs: grammar.nonTerminals){
+                if(findNewFollowSetOfLhs(grammar, lhs)){
+                    isChanged =true;
+                }
             }
         }
-        return isChanged;
-    }
-    private static Set<String> findAFollowSet_firstSetWithOutLambda(Grammar grammar, List<String> beta){
-        Set<String>firstOfBeta = findAFirstSet(grammar, beta);//follow set是找後面那個字的first set
-        Set<String> result = new HashSet<>(firstOfBeta);//把前面函式找到的放進去result
-        result.remove(lambda);//這邊不會包含L
-        return result;
     }
     private static boolean findNewFollowSetOfLhs(Grammar grammar, String lhs){
         boolean isChanged = false;
@@ -248,22 +256,11 @@ public class TopDownParserv2{
         }
         return isChanged;
     }
-    public static void findAllFollowSets(Grammar grammar){
-        for(String nt: grammar.nonTerminals){//對所有的nonterminal 建立一個hashset
-            grammar.followSets.put(nt, new HashSet<>());
-        }
-        if(grammar.startSymbol!= null){//把start symbol的follow set加上$
-            grammar.followSets.get(grammar.startSymbol).add("$");
-        }
-        boolean isChanged = true;
-        while(isChanged){
-            isChanged = false;//預設這輪沒有更動
-            for(String lhs: grammar.nonTerminals){
-                if(findNewFollowSetOfLhs(grammar, lhs)){
-                    isChanged =true;
-                }
-            }
-        }
+    private static Set<String> findAFollowSet_firstSetWithOutLambda(Grammar grammar, List<String> beta){
+        Set<String>firstOfBeta = findAFirstSet(grammar, beta);//follow set是找後面那個字的first set
+        Set<String> result = new HashSet<>(firstOfBeta);//把前面函式找到的放進去result
+        result.remove(lambda);//這邊不會包含L
+        return result;
     }
     public static void findAllPredictSets(Grammar grammar){
         for(String lhs:grammar.productions.keySet()){//所有的lhs就是production的key
@@ -314,7 +311,6 @@ public class TopDownParserv2{
             System.out.println("\n建表成功");
         }
     }
-
     public static void printParseTable(Grammar grammar){//印出parse table
         String formatSpace = "%-10s";
         List<String> columnHeader = new ArrayList<>(grammar.terminals);//建立一個Array list放所有terminal
