@@ -1,5 +1,45 @@
 /*
+    整個class叫做TopDownParserv2{
+        裡面有一個class Production做為資料封裝
+        Production裡面(){
+            用int存規格幾(行號)
+            用字串存LHS 也就是Non-terminal
+            用字串的List 存RHS 也就是Non-terminal derive 出來的東西
+            有建構子()
+        }
+        裡面有一個class Grammar 作為儲存從CFG讀取到的文法
+        Grammar裡面(){
+            有字串資料型態存startSymbol
+            Map資料型態 用字串 對應上面的Production資料型態來對應規則 叫productions
+            字串集合資料型態 存terminals
+            字串集合資料型態 存nonTerminals
+            Map資料型態 用字串 對應 集合 存first set
+            Map資料型態 用字串 對應 集合 存follow set
+            Map資料型態 用整數 對應 集合 存predictSets
+            Map資料型態 用字串 對應 另一個Map(這個Map是 字串對應Production資料型態) 存parse table
+            有一個boolean資料型態當作flag 來存這個grammar有沒有遇到conflict
+            有建構子()
+        }
+        public的readCFG method()下略 把字串的檔名丟進去 回傳一個Grammar資料型態 負責讀檔
 
+        public的findAllFirstSets 把Grammar丟進去 沒回傳值 幫non-terminal初始化一個空的 HashSet 並迴圈呼叫findNewFirstSetsOfLhs()
+        private的findNewFirstSetsOfLhs 把Grammar跟字串LHS丟進去 回傳boolean值 代表有沒有更新first set 迴圈呼叫findAFirstSet()
+        private的findAFirstSet 把Grammar跟 字串的list丟進去 回傳一個字串的集合 負責判斷三個情況 有terminal當first set 有non-terminal當first set 以及全部都會derive lambda
+        上面三個組成了找到完整的first set
+
+        findAllFollowSets 所有的nonterminal 建立一個hashset  start symbol的follow set加上$ 迴圈呼叫findNewFollowSetOfLhs
+        findNewFollowSetOfLhs 如果beta字串 的first set有lambda 或者beta字串是空的 就表示要找出所有包含beta字串的LHS 這個LHS的follow set也要包含到目前的follow set
+        findAFollowSet_firstSetWithOutLambda 呼叫findAFirstSet() 並去除Lambda follow set就是後面那個字的first set
+        上面三個組成了找到完整的follow set
+
+        findAllPredictSets 把所有的規則中的rhs的first set放進來predict set裡面 如果其中有Lambda 就把follow set也放進來
+        buildParseTable 把LHS對應的predict set中 terminal對應的位置放進去
+        printParseTable 印表 填入規則的ID(行號)
+        parseString 兩個Stack互相推來推去 對應規則決定要套用哪個 
+
+        main 強制要求輸入檔名 印出start symbol 印出所有terminal non-terminal 規則列表 first set, follow set, predict set
+        建立parse table 輸出這個CFG有沒有conflict 迴圈執行接收輸入的字串 每次都輸出有沒有錯誤或是 accept
+    }
 */
 
 import java.io.BufferedReader;
@@ -21,7 +61,7 @@ public class TopDownParserv2{
             this.rhs = rhs;
         }
 
-        @Override
+        @Override//測試用
         public String toString() {
             return id + ": " + lhs + " -> " + String.join(" ", rhs);
         }
@@ -164,7 +204,7 @@ public class TopDownParserv2{
     private static boolean findNewFirstSetsOfLhs(Grammar grammar, String lhs){
         boolean isChanged =false;
         List<Production> rules = grammar.productions.get(lhs);//拿出這個lhs所有的規則
-        if(rules ==null ){return false;}//如果non-terminal沒有定義規則 基本上不會出現
+        if(rules ==null ){return false;}//防禦 如果non-terminal沒有定義規則 基本上不會出現
         for(Production prod:rules){
             Set<String> isAFirstSet = findAFirstSet(grammar, prod.rhs);//把右邊的規則丟進去找First set 存到List裡面
             if(grammar.firstSets.get(lhs).addAll(isAFirstSet)){//把找到的所有first set 放到grammar的first set裡面
@@ -198,7 +238,7 @@ public class TopDownParserv2{
                 }
                 Set<String>firstOfBeta = findAFirstSet(grammar, beta);//這裡會包含L
                 targetFollow.addAll(findAFollowSet_firstSetWithOutLambda(grammar, beta));//這裡不包含L 函式會把L去掉
-                if(firstOfBeta.contains(lambda)||beta.isEmpty()){//如果beta的first set有lambda 或者beta字串後面是空的
+                if(firstOfBeta.contains(lambda)||beta.isEmpty()){//如果beta的first set有lambda 或者beta字串是空的
                     targetFollow.addAll(grammar.followSets.get(lhs));//那就要把那個lhs的follow set也放進去target的 follow set
                 }
                 if(targetFollow.size()>initialSize){//如果這個follow set的size比一開始大 代表有更動
@@ -309,7 +349,7 @@ public class TopDownParserv2{
         stack.push(grammar.startSymbol);
         int index = 0;
         List<Integer> apliedRules =new ArrayList<>();
-        System.out.println("\n--- Start Parsing ---");
+        System.out.println("\nStart Parsing");
         System.out.printf("%-30s %-30s %s\n", "Stack", "Input", "Action");
         while(!stack.isEmpty()){
             String top = stack.peek();
@@ -372,9 +412,11 @@ public class TopDownParserv2{
             }
         }
         // ... (The rest of the method is unchanged)
-        System.out.println("--- End Parsing ---");
+        System.out.println("End Parsing");
         System.out.print("Applied Rules: ");
-        for (int r : apliedRules) System.out.print(r + " ");
+        for (int r : apliedRules) {
+            System.out.print(r + " ");
+        }
         System.out.println("\nAccept");
     }
     public static void main(String[] args){//main
