@@ -361,7 +361,7 @@ public class TopDownParserv2{
                 lookAhead = "$";
             }
             String stackStr = String.join(" ", stack);
-            String inputStr = (index < input.size()) ? String.join(" ", input.subList(index, input.size())) : "$";
+            String inputStr = (index < input.size()) ? String.join(" ", input.subList(index, input.size())) : "$";//將剩餘未讀的 Token 轉成字串，若讀完則顯示 $
 
             // 1. Stack Top 是 Terminal 或 $
             if(grammar.terminals.contains(top)||top.equals("$")){
