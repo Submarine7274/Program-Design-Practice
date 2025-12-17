@@ -92,7 +92,7 @@ public class TopDownParserv2{
 
     public static Grammar readCFG(String filename) throws IOException{
         Grammar grammar = new Grammar();
-        //FileInputStream開檔 InputStreamReader換成char以及指定編碼UTF-8 BufferedReader可以用readLine()
+        //FileInputStream開檔 InputStreamReader換成char BufferedReader可以用readLine()
         BufferedReader br = new BufferedReader(new  InputStreamReader(new FileInputStream(filename)));
         String line;//半夜別打Line
         String currentLhs = null;//判斷目前lhs
