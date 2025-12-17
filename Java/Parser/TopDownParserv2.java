@@ -1,3 +1,7 @@
+/*
+
+*/
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -277,7 +281,9 @@ public class TopDownParserv2{
         if(!columnHeader.contains("$")){//確保有$字號
             columnHeader.add("$");
         }
-        Collections.sort(columnHeader);
+        columnHeader.remove("$");//先移除 避免影響排序
+        Collections.sort(columnHeader);//排序parse table的表頭
+        columnHeader.add("$");//放到最後面
         System.out.printf(formatSpace,"");
         for (String t : columnHeader) {//印出欄header
             System.out.printf(formatSpace,t);
@@ -298,39 +304,47 @@ public class TopDownParserv2{
         }
     }
     public static void parseString(Grammar grammar, List<String> input){
-        Stack<String> stack = new Stack<>();//建立stack
-        stack.push("$");//結尾一定是$
-        stack.push(grammar.startSymbol);//startSymbol放進去
-        int index = 0;//看到第幾個字
-        List<Integer> apliedRules =new ArrayList<>();//套用的規則紀錄
+        Stack<String> stack = new Stack<>();
+        stack.push("$");
+        stack.push(grammar.startSymbol);
+        int index = 0;
+        List<Integer> apliedRules =new ArrayList<>();
         System.out.println("\n--- Start Parsing ---");
         System.out.printf("%-30s %-30s %s\n", "Stack", "Input", "Action");
-        while(!stack.isEmpty()){//stack要清空 才算結束
-            String top = stack.peek();//看stack的頂端 但不移除
+        while(!stack.isEmpty()){
+            String top = stack.peek();
             String lookAhead;
-            if(index <input.size()){//如果目前讀到的index值比總長度小 表示input還有東西沒處理完
+            if(index <input.size()){
                 lookAhead = input.get(index);
             }
             else{
-                lookAhead = "$";//結尾都用$
+                lookAhead = "$";
             }
-            String stackStr = String.join(" ", stack);//等等要輸出的字串
-            String inputStr = (index < input.size()) ? String.join(" ", input.subList(index, input.size())) : "$";//輸入的字串 切割並在結尾放上$
-            if(grammar.terminals.contains(top)||top.equals("$")){//如果stack 的top是terminal
+            String stackStr = String.join(" ", stack);
+            String inputStr = (index < input.size()) ? String.join(" ", input.subList(index, input.size())) : "$";
+
+            // 1. Stack Top 是 Terminal 或 $
+            if(grammar.terminals.contains(top)||top.equals("$")){
                if (top.equals(lookAhead)) {
                     System.out.printf("%-30s %-30s Match %s\n", stackStr, inputStr, top);
                     stack.pop();
                     index++;
-                } else {//terminal不能配對
-                    System.out.printf("%-30s %-30s Error: Expected '%s' but got '%s'\n", stackStr, inputStr, top, lookAhead);
+                } else {
+                    // 錯誤類型 1: Terminal 匹配失敗 (Error: Expected token)
+                    System.out.printf("%-30s %-30s\n", stackStr, inputStr);
+                    System.out.println("--- End Parsing ---");
+                    System.out.print("Applied Rules: ");
+                    for (int r : apliedRules) System.out.print(r + " ");
+                    System.out.printf("Error(Expected %s)but got '%s'\n", top, lookAhead);
                     return; 
                 }
             }
-            else if (grammar.nonTerminals.contains(top)) {//top是non-terminal
+            // 2. Stack Top 是 Non-Terminal
+            else if (grammar.nonTerminals.contains(top)) {
                 Map<String, Production> row = grammar.parseTable.get(top);
                 Production prod = (row != null) ? row.get(lookAhead) : null;
-                if (prod != null) {// 成功查到規則
-                    System.out.printf("%-30s %-30s Apply Rule %d: %s\n", stackStr, inputStr, prod.id, prod.lhs + "->" + String.join(" ", prod.rhs));
+                if (prod != null) { // 成功查到規則 (Expand)
+                    System.out.printf("%-30s %-30s Apply Rule %d: %s\n", stackStr, inputStr, prod.id, prod.lhs + " -> " + String.join(" ", prod.rhs));
                     apliedRules.add(prod.id);
                     stack.pop(); 
                     List<String> rhs = prod.rhs;
@@ -339,18 +353,25 @@ public class TopDownParserv2{
                             stack.push(rhs.get(i));
                         }
                     }
-                }   
+                }
                 else {
-                    Set<String> expectedTokens = new TreeSet<>(); // 用 TreeSet 會自動排序
+                    // 錯誤類型 2: Non-Terminal 查表失敗 (Error: Non-terminal vs. Terminal)
+                    System.out.printf("%-30s %-30s\n", stackStr, inputStr);
+                    System.out.println("--- End Parsing ---");
+                    System.out.print("Applied Rules: ");
+                    for (int r : apliedRules) System.out.print(r + " ");
+                    System.out.printf("Error(%s vs. %s)\n", top, lookAhead);
+                    
+                    // 您原有的輸出（列出預期符號）對於調試也很有用，我將其作為一個額外的提示保留。
+                    Set<String> expectedTokens = new TreeSet<>();
                     if (row != null) {
                         expectedTokens.addAll(row.keySet());
                     }
-                    System.out.printf("%-30s %-30s Error: Expected one of %s but got '%s'\n", 
-                                      stackStr, inputStr, expectedTokens.toString(), lookAhead);
                     return; 
-                }   
+                }
             }
         }
+        // ... (The rest of the method is unchanged)
         System.out.println("--- End Parsing ---");
         System.out.print("Applied Rules: ");
         for (int r : apliedRules) System.out.print(r + " ");
