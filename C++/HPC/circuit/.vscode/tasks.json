@@ -9,7 +9,10 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I", "C:/Program Files (x86)/Microsoft SDKs/MPI/Include",         // 包含路徑
+                "-L", "C:/Program Files (x86)/Microsoft SDKs/MPI/Lib/x64",         // 庫檔案路徑
+                "-lmsmpi"
             ],
             "options": {
                 "cwd": "${fileDirname}"
