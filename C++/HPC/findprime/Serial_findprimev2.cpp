@@ -9,6 +9,7 @@
 void printPrimes(const bool* notPrime, int arraySize) {
     using namespace std;//良好習慣by傑哥
     long long counts = 1; //先算入唯一的偶數質數 2
+    cout<<"2 ";
     for (int i = 0; i < arraySize; i++) {
         if (!notPrime[i]) {//是質數
             counts++;
@@ -25,7 +26,6 @@ int main(){
     int arraySize = ((SIZEOFNUMBER-3)/2)+1;//不考慮偶數
     bool* notPrime = new bool[arraySize +1];//這不是指標的陣列 是動態的記憶體分配 會放在Heap裡面 避免stack overflow
     memset(notPrime,0,(arraySize+1) *sizeof(bool));//參數：指標, 設定的值(0=false, 1=true), 大小(Bytes)
-
     long long k =2;
     auto start = chrono::high_resolution_clock::now();
     for(int i =0; ; i++){
