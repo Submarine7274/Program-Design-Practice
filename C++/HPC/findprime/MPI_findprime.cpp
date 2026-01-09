@@ -1,18 +1,22 @@
 #include<iostream>
 #include<mpi.h>
 #include <cstring>
-#ifndef SIZEOFNUMBER
-#define SIZEOFNUMBER 100000000 // 設為一億
-#endif
-#ifndef BLOCK_LOW//這是第id個process負責的index的起始位置(包含)
-#define BLOCK_LOW(id, p, n)  ((unsigned long long)(id) * (n) / (p))
-#endif
-#ifndef BLOCK_HIGH//這是第id個process負責的index的結束位置(包含)
-#define BLOCK_HIGH(id, p, n) (BLOCK_LOW((id) + 1, p, n) - 1)
-#endif
-#ifndef BLOCK_SIZE//回傳第 id 個 process 負責的元素數量
-#define BLOCK_SIZE(id, p, n) (BLOCK_LOW((id) + 1, p, n) - BLOCK_LOW((id), p, n))
-#endif
+#include <vector> 
+#include <cmath>  
+const unsigned long long SIZEOFNUMBER = 100000000;
+// 定義行內函式 (取代 BLOCK 巨集)
+// inline 編譯器將函式展開，減少呼叫成本
+inline unsigned long long get_block_low(int id, int p, unsigned long long n) {
+    return (unsigned long long)id * n / p;
+}
+
+inline unsigned long long get_block_high(int id, int p, unsigned long long n) {
+    return get_block_low(id + 1, p, n) - 1;
+}
+
+inline unsigned long long get_block_size(int id, int p, unsigned long long n) {
+    return get_block_low(id + 1, p, n) - get_block_low(id, p, n);
+}
 //找質數 除了2以外的偶數都不會是質數 所以可以少找一半 所以array的index值對應到新的數 像是index0 對應到3, index1 對應到5 對應函式是value = index*2 +3 
 //版本更新
 //第一次是由rank0廣播給其他人下一個k值，但如果CPU數量超級多的時候，會產生新的k值其實在rank1的情況
@@ -53,7 +57,8 @@ int main(){
             first_multiple_value = local_start_value;
     } 
     else {
-        first_multiple_value = (local_start_value / k + 1) * k;//因為除法會無條件捨去 所以得到前一個的倍數 ＋1就是下一個的倍數 *k之後就會得到大於local_start_value且能被k整除的最小數
+        first_multiple_value = (local_start_value / k + 1) * k;
+        //因為除法會無條件捨去 所以得到前一個的倍數 ＋1就是下一個的倍數 *k之後就會得到大於local_start_value且能被k整除的最小數
     }
     if(first_multiple_value %2 == 0){//如果起始的數字是偶數 陣列中所有的數值都是奇數 要變成奇數
         first_multiple_value +=k;//加上k就是奇數了
