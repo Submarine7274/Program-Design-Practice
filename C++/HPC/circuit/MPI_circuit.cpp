@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <mpi.h>
-
 #ifndef BIT_signalValue
 #define BIT_signalValue(n, i) (((n) & (1 << (i))) ? 1 : 0)
 #endif
@@ -12,7 +11,7 @@ bool check_circuit(int id){
     for (int i = 0; i < 16; i++){
         signal[i] = BIT_signalValue(id, i);
     }    
-    /* if ((!signal[0] && !signal[1])||(signal[1] && signal[3])
+     if ((!signal[0] && !signal[1])||(signal[1] && signal[3])
     ||(!signal[2] && !signal[3])||(signal[3] && signal[4])
     ||(!signal[4] && signal[5])||(!signal[5] && signal[6])
     ||(!signal[5] && !signal[6])||(!signal[6] && signal[15])
@@ -20,25 +19,25 @@ bool check_circuit(int id){
     ||(!signal[8] && !signal[9])||(!signal[8] && signal[9])
     ||(signal[9] && signal[10])||(!signal[9] && !signal[11])
     ||(!signal[10] && !signal[11])||(!signal[12] && !signal[13])
-    ||(signal[13] && signal[14])||(!signal[14] && !signal[15])
+    ||(!signal[13] && signal[14])||(!signal[14] && !signal[15])
     ){
         return 0;// 有一個條件不通過return 0
-    } */
-    if (
-        !(
-	(signal[0] || signal[1]) && ( !signal[1] || !signal[3] ) && ( signal[2] || signal[3] ) &&
-	(!signal[3] || !signal[4]) && (signal[4] || !signal[5]) &&
-	(signal[5] || !signal[6] ) && (signal[5] || signal[6]) &&
-	(signal[6] || !signal[15]) && (signal[7] || !signal[8]) &&
-	(!signal[7] || !signal[13]) && (signal[8] || signal[9]) &&
-	(signal[8] || !signal[9]) && (!signal[9] || !signal[10]) &&
-	(signal[9] || signal[11]) && (signal[10] || signal[11]) &&
-	(signal[12] || signal[13]) && (signal[13] || !signal[14]) &&
-	(signal[14] || signal[15])
-        )
+    } 
+    /*if (
+    !(
+	(signal[0] || signal[1]) && ( !signal[1] || !signal[3] ) && 
+    ( signal[2] || signal[3] ) &&(!signal[3] || !signal[4]) && 
+    (signal[4] || !signal[5]) &&(signal[5] || !signal[6] ) && 
+    (signal[5] || signal[6]) &&(signal[6] || !signal[15]) && 
+    (signal[7] || !signal[8]) &&(!signal[7] || !signal[13]) && 
+    (signal[8] || signal[9]) &&(signal[8] || !signal[9]) && 
+    (!signal[9] || !signal[10]) &&(signal[9] || signal[11]) && 
+    (signal[10] || signal[11]) &&(signal[12] || signal[13]) && 
+    (signal[13] || !signal[14]) &&(signal[14] || signal[15])
+    )
 	){
         return 0;//early return的省時
-    }
+    }*/
     //這邊不輸出結果的原因是 平行時會搶著輸出各自的結果 會很花時間 搶著輸出也會變亂碼
     /* cout << id << ") ";//原先的格式
     for (int i = 0; i < input_digits; i++){
@@ -88,8 +87,10 @@ int main() {
     int root,              // 目標處理器：哪一個處理器負責接收最終結果
     MPI_Comm comm          // 通訊器：通常使用 MPI_COMM_WORLD
     ); */
-    MPI_Reduce(&local_solution_counts, &total_solution_counts, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);//把local的count 全部存到total的count裡 只傳一個資料 傳MPI_INT 用MPI_SUM加總 存到rank 0 用MPI_COMM_WORLD通訊器
-    MPI_Reduce(&local_time, &most_spent_time,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);//把local的時間 找最大的放到全部時間 只傳一個資料 傳MPI_DOUBLE 用MPI_MAX取最大 存到rank 0 用MPI_COMM_WORLD通訊器
+    MPI_Reduce(&local_solution_counts, &total_solution_counts, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
+    //把local的count 全部存到total的count裡 只傳一個資料 傳MPI_INT 用MPI_SUM加總 存到rank 0 用MPI_COMM_WORLD通訊器
+    MPI_Reduce(&local_time, &most_spent_time,1,MPI_DOUBLE,MPI_MAX,0,MPI_COMM_WORLD);
+    //把local的時間 找最大的放到全部時間 只傳一個資料 傳MPI_DOUBLE 用MPI_MAX取最大 存到rank 0 用MPI_COMM_WORLD通訊器
     if(rank ==0){
         cout << "Total: " << total_solution_counts << " solutions." <<endl;//理論上有runs*9次
         cout << "Spent " << most_spent_time<< " seconds." << endl;//輸出時間

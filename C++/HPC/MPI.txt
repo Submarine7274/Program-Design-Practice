@@ -1,6 +1,7 @@
 微軟MPI:
 編譯:
-gcc 程式碼.cpp -o 輸出檔名 -I $MSMPI_INC -L $MSMPI_LIB64 -l msmpi
+g++ 輸入檔名.cpp -o 輸出檔名.exe -I "C:\Program Files (x86)\Microsoft SDKs\MPI\Include" -L "C:\Program Files (x86)\Microsoft SDKs\MPI\Lib\x64" -lmsmpi
+
 
 執行
 mpiexec -n 處理器數量 檔名.exe
