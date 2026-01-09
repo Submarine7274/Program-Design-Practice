@@ -32,9 +32,9 @@ int main(){
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     unsigned long long global_elements = (SIZEOFNUMBER - 3) / 2 + 1;//只處理奇數 不包含偶數 所以減掉0 1 2這三個數 加1是3這個數也要算進去
 
-    unsigned long long local_low_index = BLOCK_LOW(rank, size, global_elements);//自己負責的起點
-    unsigned long long local_high_index = BLOCK_HIGH(rank, size, global_elements);//自己負責的終點
-    unsigned long long local_size = BLOCK_SIZE(rank, size, global_elements);//負責多少元素
+    unsigned long long local_low_index = get_block_low(rank, size, global_elements);//自己負責的起點
+    unsigned long long local_high_index = get_block_high(rank, size, global_elements);//自己負責的終點
+    unsigned long long local_size = get_block_size(rank, size, global_elements);//負責多少元素
     bool* local_prime_array = new bool[local_size];//宣告自己負責的陣列
     memset(local_prime_array, 0, local_size * sizeof(bool));//把整個自己負責的array全部設成false false是質數 true是合數
     unsigned long long upper  = sqrt(SIZEOFNUMBER);//根號N
