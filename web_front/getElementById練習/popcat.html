@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Pop cat</h1>
+
+<p id="changeFontSize">JavaScript can change HTML attribute values.</p>
+
+<button onclick="
+    let img = document.getElementById('myImage');
+    if (img.src.includes('smile.jpg')) {
+        img.src = 'pop.jpg';
+    } else {
+        img.src = 'smile.jpg';
+    }
+">切換圖片 (Pop/Smile)</button>
+
+<br>
+<img id="myImage" src="smile.jpg" style="width:100px; display:block;">
+<br>
+
+<button onclick="document.getElementById('changeFontSize').style.fontSize='50px'">Change font size</button>
+<br><br>
+
+<button onclick="
+  let img = document.getElementById('myImage');
+  if (img.style.display === 'none') {
+    img.style.display = 'block';
+  } else {
+    img.style.display = 'none';
+  }
+">顯示/隱藏圖片</button>
+
+</body>
+</html>
