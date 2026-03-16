@@ -5,8 +5,8 @@ function testInnerText(){
     document.getElementById("innerText").innerText ="This is the example of innerText method.";
 }
 function testDocumentWrite(){
-    document.write("This will oerwrite all of html.");
+    document.write("<p>This will overwrite all of html.</p>");
 }
 function testWindowAlert(){
-    window.alert("Suprise!")
+    window.alert("Surprise!");
 }

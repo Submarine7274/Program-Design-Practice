@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="style.css">
         <title>output練習</title>
     </head>
 <body>
-    <p id="innerhtml">This paragraph only changed while the Inner HTML button clicked</p>
+    <p id="innerhtml">This paragraph only changed only changes when the inner html  button is clicked</p>
     <br><br>
-    <p id="innerText">This paragraph only changed while the Inner Text button clicked</p>
+    <p id="innerText">This paragraph only changed only changes when the inner text button is clicked</p>
     <br><br>
+    
+    <button type="button" onclick="testInnerHTML()" class="my-btn" >Inner HTML</button>
+    <br><br>
+    <button type="button" onclick="testInnerText()" class="my-btn">Inner Text</button>
+    <br><br>
+    <button type="button" onclick="testDocumentWrite()" class="my-btn">Document Write</button>
+    <br><br>
+    <button type="button" onclick="testWindowAlert()" class="my-btn">WindowAlert</button>
     <script src="outputPractice.js"></script>
-    <button type="button" onclick="testInnerHTML()" >Inner HTML</button>
-    <br><br>
-    <button type="button" onclick="testInnerText()" >Inner Text</button>
-    <br><br>
-    <button type="button" onclick="testDocumentWrite()" >Document Write</button>
-    <br><br>
-    <button type="button" onclick="testWindowAlert()" >WindowAlert</button>
-
 </body>
 </html> 

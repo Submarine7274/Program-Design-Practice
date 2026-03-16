@@ -1,0 +1,61 @@
+/* 設定整個網頁的基礎排版與背景 */
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* 使用現代無襯線字體，閱讀體驗較佳 */
+    background-color: #f0f2f5; /* 輕微的灰白色背景，可以讓白色的內容區塊更突出 */
+    color: #333;               /* 深灰色的基礎文字顏色，比純黑更柔和 */
+    padding: 20px;             /* 讓內容不要緊貼瀏覽器邊緣 */
+}
+
+/* 標題樣式微調 */
+h1, h2 {
+    color: #2c3e50;            /* 給標題一個深藍灰色，增加層次感 */
+}
+
+/* 針對 JavaScript 寫入內容的容器 (#demo) 進行設計 */
+#demo {
+    background-color: #ffffff; /* 設定純白背景，形成一個明顯的「卡片」視覺效果 */
+    max-width: 400px;          /* 限制最大寬度，避免在大螢幕上文字拉得太長 */
+    border-radius: 8px;        /* 讓卡片的四個角變圓滑 */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 加上淡淡的陰影，產生立體浮動感 */
+    padding: 15px;             /* 讓裡面的文字不會貼齊卡片邊緣 */
+}
+
+/* 針對 #demo 裡面的每一個 div (也就是迴圈產生的每一列) 進行排版 */
+#demo div {
+    padding: 10px 15px;        /* 上下 10px，左右 15px 的內距，讓每一列有呼吸空間 */
+    margin-bottom: 5px;        /* 每一列之間留出一點空隙 */
+    background-color: #f9f9f9; /* 給每一列非常淺的灰色背景，區分行與行 */
+    border-radius: 4px;        /* 每一列也有小圓角 */
+    border-left: 4px solid #ddd; /* 左側加上一條灰色裝飾線，增加設計感 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* 為滑鼠懸停動畫做準備 */
+}
+
+/* 當滑鼠移到特定一列時的互動效果 */
+#demo div:hover {
+    transform: translateX(5px); /* 滑鼠游標放上去時，整個 div 會向右微幅移動 5px */
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1); /* 懸停時加深陰影 */
+    border-left-color: #888;   /* 懸停時左側裝飾線變深色 */
+}
+/* 設計你的漂亮按鈕 */
+.my-btn {
+    margin: 5px;
+    background-color: hsl(195, 80%, 50%); 
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+/* 滑鼠懸停效果 */
+.my-btn:hover {
+    background-color: hsl(195, 80%, 70%);
+    transform: scale(1.05); /* 稍微放大 */
+}
+
+/* 點擊時的效果 */
+.my-btn:active {
+    transform: scale(0.95);
+}
