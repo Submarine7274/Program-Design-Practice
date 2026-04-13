@@ -22,15 +22,13 @@
 #include <algorithm> // 用於 sort 排序函式
 #include <cmath>     // 用於 abs 絕對值函式
 #include <vector>    // 用於 vector 動態陣列
-
-using namespace std;
-
 int main() {
+    using namespace std;
     // 1. I/O 加速優化
     // 這是 CPE/UVa 必備的起手式，避免因輸入輸出太慢導致 TLE (Time Limit Exceeded)
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
+    
     int cases;
     cin >> cases; // 讀取總共有幾組測資
     
