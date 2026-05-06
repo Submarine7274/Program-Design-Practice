@@ -1,6 +1,6 @@
  <!-- Echo HTML
 直接回傳一個字串"<div>hello world</div>" -->
-<php
+<?php
 echo "<div>hello world</div>";
 ?>
 
