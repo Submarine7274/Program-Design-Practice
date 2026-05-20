@@ -28,7 +28,9 @@ myfun<-function(filename){
   correct_answers<-c("B","D","A","C","B","15","20","Rose","Lavender","Jasmine")
   score_weight<-c(rep(3,5),rep(10,2),rep(7,3))
   base_score<-44
-  column_class <- 
+  column_class <- names(anslist)[1]
+  column_student_id <- names(anslist)[2]
+  records <- nrow(anslist)
 }
 myfun <- function(filename) {
   library(plyr)
