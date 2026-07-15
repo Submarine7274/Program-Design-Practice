@@ -55,7 +55,7 @@ disaster_months <- anomaly_detector %>%
   arrange(desc(牽涉硬體數量))
 
 # 模組：輸出檢驗報告
-cat("=== Steam 歷史抽樣災難排行榜 ===\n")
-print(disaster_months, n = Inf, width = Inf)
+#cat("=== Steam 歷史抽樣災難排行榜 ===\n")
+#print(disaster_months, n = Inf, width = Inf)
 View(disaster_months)
 View(anomaly_detector)
