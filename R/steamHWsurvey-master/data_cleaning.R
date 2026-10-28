@@ -1,6 +1,6 @@
 # 模組：載入必要套件
 library(tidyverse)
-
+library(readr)
 # 模組：讀取原始資料 (保留真實雜訊)
 if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
   setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
@@ -59,3 +59,4 @@ disaster_months <- anomaly_detector %>%
 #print(disaster_months, n = Inf, width = Inf)
 View(disaster_months)
 View(anomaly_detector)
+

@@ -2,6 +2,7 @@ library(tidyverse)
 library(scales)
 library(zoo)
 library(ggrepel)
+library(ggplot2)
 
 # 模組：圖表匯出函式
 export_steam_charts <- function(plot_list, output_dir = "steam_charts_output") {
