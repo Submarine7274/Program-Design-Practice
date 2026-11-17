@@ -1,8 +1,8 @@
 # ==========================================
-# grade_hw.R (助教批改專用腳本)
+# grade.R (助教批改專用腳本)
 # ==========================================
 
-source("teacher_env.R", encoding = "UTF-8")
+source("env.R", encoding = "UTF-8")
 
 get_standard_answer <- function(df) {
   df$Job <- ifelse(is.na(df$Job), "Normal", trimws(df$Job))
@@ -56,21 +56,25 @@ get_standard_answer <- function(df) {
     if(df$Economy[i] == "Rich") mults[i] <- mults[i] * 0.5
   }
   
-  # ★ 老師的標準答案也要加上 ceiling() 才能確保比對時一致
   return(ceiling(unit_prices * mults * df$Qty))
 }
 
+# ★ 助教端產生 30 筆測資，壓力測試
+test_queue <- generate_queue(30)
 standard_totals <- get_standard_answer(test_queue)
 
 tryCatch({
-  source("demo.R", encoding = "UTF-8")
-  student_result_df <- appraise_inventory(test_queue)
+  run_interactive_test <- function(...) { invisible(NULL) }
+  
+  source("homework.R", encoding = "UTF-8")
+  
+  student_result_df <- myfunction(test_queue)
   
   comparison_table <- data.frame(
     ID = test_queue$CustomerID,
     Job = test_queue$Job,
-    Economy = test_queue$Economy,
-    Category = test_queue$Category,
+    Econ = test_queue$Economy,
+    Cat = test_queue$Category,
     Tier = test_queue$ClaimedTier,
     Qty = test_queue$Qty,
     Standard = standard_totals,
@@ -83,7 +87,7 @@ tryCatch({
   }, comparison_table$Standard, comparison_table$Student)
   
   cat("====================================================\n")
-  cat("                    批改結果報告                    \n")
+  cat("                    批改結果報告 (30筆)             \n")
   cat("====================================================\n")
   print(comparison_table)
   
@@ -91,6 +95,5 @@ tryCatch({
   cat(sprintf("\n>>> 最終成績：答對 %d / %d 題\n", correct_count, nrow(comparison_table)))
   
 }, error = function(e) {
-  cat("\n[錯誤] 學生程式執行失敗，原因：\n")
-  cat(e$message, "\n")
+  cat("\n[錯誤] 學生程式碼執行失敗：\n", e$message, "\n")
 })

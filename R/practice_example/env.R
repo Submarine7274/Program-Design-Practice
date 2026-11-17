@@ -1,5 +1,5 @@
 # ==========================================
-# teacher_env.R (提供給學生的環境檔)
+# env.R (提供給學生的環境檔)
 # ==========================================
 
 # 鎖定亂數種子
@@ -30,54 +30,97 @@ make_typo <- function(item_name) {
   return(item_name)
 }
 
-# ★ 改寫後的佇列產生器：強制安插所有邊界條件 (Edge Cases)
-generate_queue <- function() {
-  n <- 5
+# ★ 強制安插 10 種必測情境的佇列產生器
+generate_queue <- function(n = 10) {
+  if (n < 10) n <- 10 # 確保至少能測滿 10 個核心情境
+  
   df <- data.frame(CustomerID = 1:n, stringsAsFactors = FALSE)
   
-  # 分類與基本屬性依舊隨機
+  # 預先填入隨機資料
   df$Category <- sample(names(unique_items_list), n, replace = TRUE)
   df$Job <- sample(c("Saber", "Archer", "Lancer", "Merchant", "Normal"), n, replace = TRUE)
   df$Economy <- sample(c("Poor", "Normal", "Rich"), n, replace = TRUE)
-  
-  df$ClaimedTier <- character(n)
-  df$Qty <- numeric(n)
+  df$ClaimedTier <- sample(c("Common", "Decent", "Rare", "Flawless", "Unique"), n, replace = TRUE)
+  df$Qty <- sample(1:3, n, replace = TRUE, prob = c(0.7, 0.2, 0.1))
   df$ItemName <- character(n)
   
-  # 客人 1：一般裝備 (測試基礎邏輯)
+  # ==========================================
+  # 覆寫前 10 筆為必測極端情境 (Edge Cases)
+  # ==========================================
+  # 情境 1：一般裝備 (測試基礎邏輯，無任何加成)
   df$ClaimedTier[1] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
-  df$Qty[1] <- sample(1:3, 1)
-  df$ItemName[1] <- paste("Unknown", df$Category[1])
+  df$Job[1] <- "Normal"
+  df$Economy[1] <- "Normal"
   
-  # 客人 2：真正的獨特神兵 (測試 Inf 判斷)
+  # 情境 2：真正的獨特神兵 (測試 Inf 判斷)
   df$ClaimedTier[2] <- "Unique"
   df$Qty[2] <- 1
-  df$ItemName[2] <- sample(unique_items_list[[df$Category[2]]], 1)
   
-  # 客人 3：假貨陷阱 A - 獨特裝但數量大於等於 2
+  # 情境 3：假貨陷阱 A - 獨特裝但數量大於等於 2
   df$ClaimedTier[3] <- "Unique"
-  df$Qty[3] <- sample(2:3, 1) # 強制給 2 或 3
-  df$ItemName[3] <- sample(unique_items_list[[df$Category[3]]], 1)
+  df$Qty[3] <- sample(2:3, 1)
   
-  # 客人 4：假貨陷阱 B - 獨特裝但名字有錯字
+  # 情境 4：假貨陷阱 B - 獨特裝但名字有錯字 (名稱在後續迴圈處理)
   df$ClaimedTier[4] <- "Unique"
   df$Qty[4] <- 1
-  df$ItemName[4] <- make_typo(sample(unique_items_list[[df$Category[4]]], 1))
   
-  # 客人 5：隱藏資訊測試 - 職業與財力為 NA (測試防呆)
+  # 情境 5：隱藏資訊測試 - 職業與財力為 NA
   df$ClaimedTier[5] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
-  df$Qty[5] <- 1
-  df$ItemName[5] <- paste("Unknown", df$Category[5])
   df$Job[5] <- NA
   df$Economy[5] <- NA
   
+  # 情境 6：職業專武加成 (測試 1.2 倍與條件判定)
+  combo <- list(c("Saber", "Sword"), c("Archer", "Bow"), c("Lancer", "Lance"))
+  chosen <- combo[[sample(1:3, 1)]]
+  df$Job[6] <- chosen[1]
+  df$Category[6] <- chosen[2]
+  df$ClaimedTier[6] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
+  
+  # 情境 7：多重乘數疊加 (測試 Merchant 0.9 * Rich 0.5)
+  df$Job[7] <- "Merchant"
+  df$Economy[7] <- "Rich"
+  df$ClaimedTier[7] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
+  
+  # 情境 8：髒資料 (測試 trimws 是否有確實執行)
+  df$Job[8] <- " Saber "
+  df$Economy[8] <- " Poor "
+  df$Category[8] <- "Sword"
+  df$ClaimedTier[8] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
+  
+  # 情境 9：指數計算極端值 (測試 Ring/Amulet 等 ^8)
+  df$Category[9] <- sample(c("Ring", "Amulets", "Belt", "Grimoire", "Elixir"), 1)
+  df$ClaimedTier[9] <- "Flawless"
+  
+  # 情境 10：倍數乘法計算 (測試 Shield/Armor *4)
+  df$Category[10] <- sample(c("Shield", "Armor"), 1)
+  df$ClaimedTier[10] <- "Rare"
+  
+  # 統一產生 ItemName
+  for(i in 1:n) {
+    if (df$ClaimedTier[i] == "Unique") {
+      name <- sample(unique_items_list[[df$Category[i]]], 1)
+      
+      if (i == 4) {
+        # 情境 4 必定錯字
+        name <- make_typo(name)
+      } else if (i == 2 || i == 3) {
+        # 情境 2, 3 保證沒錯字，確保陷阱原因單一
+        name <- name
+      } else {
+        # 其他隨機生成的 Unique 有 30% 機率錯字
+        if (sample(c(TRUE, FALSE), 1, prob = c(0.3, 0.7))) name <- make_typo(name)
+      }
+      df$ItemName[i] <- name
+    } else {
+      df$ItemName[i] <- paste("Unknown", df$Category[i])
+    }
+  }
   return(df)
 }
 
-# 提供給學生的互動測試系統
+# 學生互動測試系統 (預設給予 10 題涵蓋所有情境)
 run_interactive_test <- function(student_func) {
-  # 測試時不鎖死 Seed，讓裝備名稱隨機變換，但情境 100% 固定
-  test_queue <- generate_queue()
+  test_queue <- generate_queue(10)
   
   computed_df <- tryCatch({
     student_func(test_queue)
@@ -92,7 +135,7 @@ run_interactive_test <- function(student_func) {
     return()
   }
   
-  cat("【系統】自主測試開始！請心算價格來驗證你的程式碼是否正確。\n\n")
+  cat("【系統】自主測試開始！共 10 位客人，請心算價格來驗證你的程式碼。\n\n")
   
   for(i in 1:nrow(test_queue)) {
     c_item <- test_queue$ItemName[i]
@@ -100,12 +143,12 @@ run_interactive_test <- function(student_func) {
     c_cat <- test_queue$Category[i]
     c_tier <- test_queue$ClaimedTier[i]
     
-    c_job <- ifelse(is.na(test_queue$Job[i]), "(隱藏)", trimws(test_queue$Job[i]))
-    c_econ <- ifelse(is.na(test_queue$Economy[i]), "(隱藏)", trimws(test_queue$Economy[i]))
+    c_job <- ifelse(is.na(test_queue$Job[i]), "(隱藏)", paste0("'", test_queue$Job[i], "'"))
+    c_econ <- ifelse(is.na(test_queue$Economy[i]), "(隱藏)", paste0("'", test_queue$Economy[i], "'"))
     
     cat("--------------------------------------------------\n")
-    cat(sprintf("[客人 %d] 物品：%s x %d (分類：%s, 聲稱：%s)\n", i, c_item, c_qty, c_cat, c_tier))
-    cat(sprintf("          觀察 - 職業：%s | 財力：%s\n", c_job, c_econ))
+    cat(sprintf("[客人 %02d] 物品：%s x %d (分類：%s, 聲稱：%s)\n", i, c_item, c_qty, c_cat, c_tier))
+    cat(sprintf("          職業：%s |財力：%s\n", c_job, c_econ))
     cat("--------------------------------------------------\n")
     
     player_input <- readline(prompt = "心算報價 (數字/Inf，或 exit 退出)：")

@@ -2,9 +2,9 @@
 # student_hw.R (學生自己寫的 Dataframe 與條件判斷)
 # ==========================================
 
-source("teacher_env.R", encoding = "UTF-8")
+source("env.R", encoding = "UTF-8")
 
-appraise_inventory <- function(df) {
+myfunction <- function(df) {
   
   df$Job <- ifelse(is.na(df$Job), "Normal", trimws(df$Job))
   df$Economy <- ifelse(is.na(df$Economy), "Normal", trimws(df$Economy))
@@ -60,4 +60,4 @@ appraise_inventory <- function(df) {
 
 # ★ 學生在此呼叫教師環境提供的測試函式，傳入自己寫的邏輯
 # 如果想關閉互動測試，把這行註解掉即可
-run_interactive_test(appraise_inventory)
+run_interactive_test(myfunction)
