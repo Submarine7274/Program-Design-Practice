@@ -2,8 +2,7 @@
 # env.R (提供給學生的環境檔)
 # ==========================================
 
-# 鎖定亂數種子
-set.seed(20261116)
+
 
 unique_items_list <- list(
   Sword = c("Excalibur", "Aroundight", "Kusanagi-no-Tsurugi", "Goujian", "Joyeuse", "Honjo Masamune", "Zulfiqar", "The Saviour", "Paradoxica", "Cospri's Malice", "The Golden Charlatan", "Starforge", "Voidforge"),
@@ -22,14 +21,83 @@ unique_items_list <- list(
   Grimoire = c("Codex Gigas", "Voynich Manuscript", "Lemegeton", "Book of Thoth", "Book of Vishanti", "R'lyeh Text")
 )
 
-make_typo <- function(item_name) {
-  pos <- sample(1:nchar(item_name), 1)
-  orig_char <- substr(item_name, pos, pos)
-  candidates <- setdiff(c(letters, LETTERS), orig_char)
-  substr(item_name, pos, pos) <- sample(candidates, 1)
-  return(item_name)
+make_typo <- function(item_name, valid_names) {
+  
+  chars <- strsplit(item_name, "")[[1]]
+  
+  valid_pos <- which(grepl("[a-zA-Z]", chars))
+  
+  if (length(valid_pos) == 0) {
+    stop("無法產生錯字")
+  }
+  
+  candidates <- c(letters, LETTERS)
+  
+  typo_candidates <- unlist(lapply(valid_pos, function(pos) {
+    
+    new_chars <- lapply(
+      setdiff(candidates, chars[pos]),
+      function(new_char) {
+        temp <- chars
+        temp[pos] <- new_char
+        paste0(temp, collapse = "")
+      }
+    )
+    
+    unlist(new_chars)
+  }))
+  
+  typo_candidates <- setdiff(
+    typo_candidates,
+    valid_names
+  )
+  
+  sample(typo_candidates, 1)
 }
-
+validate_queue <- function(df) {
+  
+  required_cols <- c(
+    "CustomerID",
+    "Category",
+    "Job",
+    "Economy",
+    "ClaimedTier",
+    "Qty",
+    "ItemName"
+  )
+  
+  missing_cols <- setdiff(required_cols, names(df))
+  
+  if (length(missing_cols) > 0) {
+    stop(
+      paste(
+        "缺少欄位：",
+        paste(missing_cols, collapse = ", ")
+      )
+    )
+  }
+  
+  if (any(is.na(df$Category))) {
+    stop("Category 不可為 NA")
+  }
+  
+  if (any(!df$Category %in% names(unique_items_list))) {
+    stop("發現不存在的裝備分類")
+  }
+  
+  if (!is.numeric(df$Qty) ||
+      anyNA(df$Qty) ||
+      any(!is.finite(df$Qty)) ||
+      any(df$Qty < 1 | df$Qty != floor(df$Qty))) {
+    
+    stop("Qty 必須為正整數")
+  }
+  if (!is.data.frame(df)) {
+    stop("輸入資料必須是 Dataframe")
+  }
+  
+  TRUE
+}
 # ★ 強制安插 10 種必測情境的佇列產生器
 generate_queue <- function(n = 10) {
   if (n < 10) n <- 10 # 確保至少能測滿 10 個核心情境
@@ -38,8 +106,8 @@ generate_queue <- function(n = 10) {
   
   # 預先填入隨機資料
   df$Category <- sample(names(unique_items_list), n, replace = TRUE)
-  df$Job <- sample(c("Saber", "Archer", "Lancer", "Merchant", "Normal"), n, replace = TRUE)
-  df$Economy <- sample(c("Poor", "Normal", "Rich"), n, replace = TRUE)
+  df$Job <- sample(c("Saber", "Archer", "Lancer", "Merchant", "Unknown"), n, replace = TRUE)
+  df$Economy <- sample(c("Poor", "Unknown", "Rich"), n, replace = TRUE)
   df$ClaimedTier <- sample(c("Common", "Decent", "Rare", "Flawless", "Unique"), n, replace = TRUE)
   df$Qty <- sample(1:3, n, replace = TRUE, prob = c(0.7, 0.2, 0.1))
   df$ItemName <- character(n)
@@ -49,8 +117,8 @@ generate_queue <- function(n = 10) {
   # ==========================================
   # 情境 1：一般裝備 (測試基礎邏輯，無任何加成)
   df$ClaimedTier[1] <- sample(c("Common", "Decent", "Rare", "Flawless"), 1)
-  df$Job[1] <- "Normal"
-  df$Economy[1] <- "Normal"
+  df$Job[1] <- "Unknown"
+  df$Economy[1] <- "Unknown"
   
   # 情境 2：真正的獨特神兵 (測試 Inf 判斷)
   df$ClaimedTier[2] <- "Unique"
@@ -101,25 +169,28 @@ generate_queue <- function(n = 10) {
       name <- sample(unique_items_list[[df$Category[i]]], 1)
       
       if (i == 4) {
-        # 情境 4 必定錯字
-        name <- make_typo(name)
+        name <- make_typo(name, unique_items_list[[df$Category[i]]])
       } else if (i == 2 || i == 3) {
-        # 情境 2, 3 保證沒錯字，確保陷阱原因單一
         name <- name
       } else {
-        # 其他隨機生成的 Unique 有 30% 機率錯字
-        if (sample(c(TRUE, FALSE), 1, prob = c(0.3, 0.7))) name <- make_typo(name)
+        if (sample(c(TRUE, FALSE), 1, prob = c(0.3, 0.7))) {
+          name <- make_typo(name, unique_items_list[[df$Category[i]]])
+        }
       }
       df$ItemName[i] <- name
     } else {
       df$ItemName[i] <- paste("Unknown", df$Category[i])
     }
   }
+  validate_queue(df)
   return(df)
 }
 
 # 學生互動測試系統 (預設給予 10 題涵蓋所有情境)
 run_interactive_test <- function(student_func) {
+  if (exists("GRADING_MODE") && GRADING_MODE) return(invisible(NULL))
+  set.seed(20261116)
+  #種子在此設定
   test_queue <- generate_queue(10)
   
   computed_df <- tryCatch({
@@ -143,8 +214,8 @@ run_interactive_test <- function(student_func) {
     c_cat <- test_queue$Category[i]
     c_tier <- test_queue$ClaimedTier[i]
     
-    c_job <- ifelse(is.na(test_queue$Job[i]), "(隱藏)", paste0("'", test_queue$Job[i], "'"))
-    c_econ <- ifelse(is.na(test_queue$Economy[i]), "(隱藏)", paste0("'", test_queue$Economy[i], "'"))
+    c_job <- ifelse(is.na(test_queue$Job[i]), "Unknown", paste0("'", test_queue$Job[i], "'"))
+    c_econ <- ifelse(is.na(test_queue$Economy[i]), "Unknown", paste0("'", test_queue$Economy[i], "'"))
     
     cat("--------------------------------------------------\n")
     cat(sprintf("[客人 %02d] 物品：%s x %d (分類：%s, 聲稱：%s)\n", i, c_item, c_qty, c_cat, c_tier))
@@ -166,14 +237,14 @@ run_interactive_test <- function(student_func) {
       cat("【系統警告】你的程式在此筆資料算出了 NA！\n")
     } else if (system_price == 0) {
       if (player_quote == 0) cat("【評價】Perfect (完美的估價)\n")
-      else if (is.infinite(player_quote)) cat("【評價】Overvalued Replica (敝帚自珍)\n")
+      else if (player_quote == Inf) cat("【評價】Overvalued Replica (敝帚自珍)\n")
       else cat("【評價】Eye Doctor (該去看眼科了)\n")
     } else if (is.infinite(system_price)) {
-      if (is.infinite(player_quote)) cat("【評價】Perfect (完美的估價)\n")
+      if (player_quote == Inf) cat("【評價】Perfect (完美的估價)\n")
       else if (player_quote == 0) cat("【評價】Missed Treasure (錯失珍寶)\n")
       else cat("【評價】Eye Doctor (該去看眼科了)\n")
     } else {
-      if (is.infinite(player_quote)) {
+      if (player_quote == Inf) {
         cat("【評價】Eye Doctor (該去看眼科了)\n")
       } else {
         diff_ratio <- abs(player_quote - system_price) / system_price

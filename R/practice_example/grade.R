@@ -1,12 +1,12 @@
 # ==========================================
 # grade.R (助教批改專用腳本)
 # ==========================================
-
+GRADING_MODE <<- FALSE
 source("env.R", encoding = "UTF-8")
 
 get_standard_answer <- function(df) {
-  df$Job <- ifelse(is.na(df$Job), "Normal", trimws(df$Job))
-  df$Economy <- ifelse(is.na(df$Economy), "Normal", trimws(df$Economy))
+  df$Job <- ifelse(is.na(df$Job) | trimws(as.character(df$Job)) == "", "Unknown", trimws(as.character(df$Job)))
+  df$Economy <- ifelse(is.na(df$Economy) | trimws(as.character(df$Economy)) == "", "Unknown", trimws(as.character(df$Economy)))
   
   base_prices <- c(Sword=10, Shield=50, Armor=100, Lance=5, Dagger=5, Axe=15, 
                    Mace=15, Stave=15, Bow=30, Elixir=10, Ring=5, Amulets=5, Belt=3, Grimoire=5)
@@ -60,6 +60,8 @@ get_standard_answer <- function(df) {
 }
 
 # ★ 助教端產生 30 筆測資，壓力測試
+set.seed(20261116)
+#在此設定種子
 test_queue <- generate_queue(30)
 standard_totals <- get_standard_answer(test_queue)
 
@@ -69,7 +71,30 @@ tryCatch({
   source("homework.R", encoding = "UTF-8")
   
   student_result_df <- myfunction(test_queue)
+  if (!is.data.frame(student_result_df)) {
+    stop("回傳結果必須是 Dataframe")
+  }
   
+  if (!"TotalPrice" %in% names(student_result_df)) {
+    stop("缺少 TotalPrice 欄位")
+  }
+  
+  if (nrow(student_result_df) != nrow(test_queue)) {
+    stop("回傳資料筆數不正確")
+  }
+  
+  if (!is.numeric(student_result_df$TotalPrice)) {
+    stop("TotalPrice 必須為數值型態")
+  }
+  if (length(student_result_df$TotalPrice) != nrow(test_queue)) {
+    stop("TotalPrice 數量與測試資料筆數不一致")
+  }
+  if (!identical(
+    student_result_df$CustomerID,
+    test_queue$CustomerID
+  )) {
+    stop("不可更改原始資料的順序")
+  }
   comparison_table <- data.frame(
     ID = test_queue$CustomerID,
     Job = test_queue$Job,
@@ -81,17 +106,43 @@ tryCatch({
     Student = student_result_df$TotalPrice,
     stringsAsFactors = FALSE
   )
-  
-  comparison_table$IsCorrect <- mapply(function(std, stu) {
-    isTRUE(all.equal(as.numeric(std), as.numeric(stu)))
-  }, comparison_table$Standard, comparison_table$Student)
-  
+  compare_price <- function(std, stu) {
+    
+    if (is.na(std) || is.na(stu)) {
+      return(FALSE)
+    }
+    
+    if (is.infinite(std) || is.infinite(stu)) {
+      return(identical(std, stu))
+    }
+    
+    isTRUE(all.equal(std, stu))
+  }
+  comparison_table$IsCorrect <- mapply(
+    compare_price,
+    comparison_table$Standard,
+    comparison_table$Student
+  )
   cat("====================================================\n")
   cat("                    批改結果報告 (30筆)             \n")
   cat("====================================================\n")
   print(comparison_table)
   
   correct_count <- sum(comparison_table$IsCorrect, na.rm = TRUE)
+  wrong_rows <- which(
+    !comparison_table$IsCorrect
+  )
+  
+  cat("\n錯誤題數：", length(wrong_rows), "\n")
+  
+  if (length(wrong_rows) > 0) {
+    
+    cat("\n錯誤題目：\n")
+    
+    print(
+      comparison_table[wrong_rows, ]
+    )
+  }
   cat(sprintf("\n>>> 最終成績：答對 %d / %d 題\n", correct_count, nrow(comparison_table)))
   
 }, error = function(e) {
