@@ -1,5 +1,5 @@
 # ==========================================
-# grade.R (助教批改專用腳本)
+# grade.R (助教批改用)
 # ==========================================
 GRADING_MODE <<- FALSE
 source("env.R", encoding = "UTF-8")
@@ -59,10 +59,11 @@ get_standard_answer <- function(df) {
   return(ceiling(unit_prices * mults * df$Qty))
 }
 
-# ★ 助教端產生 30 筆測資，壓力測試
+
 set.seed(20261116)
 #在此設定種子
 test_queue <- generate_queue(30)
+# 產生 30 筆測資
 standard_totals <- get_standard_answer(test_queue)
 
 tryCatch({
