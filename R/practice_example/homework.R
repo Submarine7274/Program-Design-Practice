@@ -1,5 +1,5 @@
 # ==========================================
-# homework.R (學生自己寫的 Dataframe 與條件判斷)
+# homework.R (同學要自己寫的 Dataframe 與條件判斷)
 # ==========================================
 
 source("env.R", encoding = "UTF-8")
@@ -124,6 +124,6 @@ myfunction <- function(df) {
   return(df)
 }
 
-# ★ 學生在此呼叫環境提供的測試函式，傳入自己寫的邏輯
+# 在此呼叫環境提供的測試函式，傳入自己寫的邏輯
 # 如果想關閉互動測試，把這行註解掉即可
 run_interactive_test(myfunction)

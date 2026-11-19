@@ -120,7 +120,7 @@ generate_queue <- function(n = 10) {
   df$Job[1] <- "Unknown"
   df$Economy[1] <- "Unknown"
   
-  # 情境 2：真正的獨特神兵 (測試 Inf 判斷)
+  # 情境 2：真正的獨特 (測試 Inf 判斷)
   df$ClaimedTier[2] <- "Unique"
   df$Qty[2] <- 1
   
@@ -128,7 +128,7 @@ generate_queue <- function(n = 10) {
   df$ClaimedTier[3] <- "Unique"
   df$Qty[3] <- sample(2:3, 1)
   
-  # 情境 4：假貨陷阱 B - 獨特裝但名字有錯字 (名稱在後續迴圈處理)
+  # 情境 4：假貨陷阱 B - 獨特裝但名字有錯字 
   df$ClaimedTier[4] <- "Unique"
   df$Qty[4] <- 1
   
@@ -186,7 +186,7 @@ generate_queue <- function(n = 10) {
   return(df)
 }
 
-# 學生互動測試系統 (預設給予 10 題涵蓋所有情境)
+# 互動測試系統 (預設給 10 題情境)
 run_interactive_test <- function(student_func) {
   if (exists("GRADING_MODE") && GRADING_MODE) return(invisible(NULL))
   set.seed(20261116)

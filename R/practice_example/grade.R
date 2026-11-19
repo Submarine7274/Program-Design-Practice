@@ -1,7 +1,7 @@
 # ==========================================
-# grade.R (助教批改用)
+# grade.R (批改用)
 # ==========================================
-GRADING_MODE <<- FALSE
+GRADING_MODE <<- TRUE
 source("env.R", encoding = "UTF-8")
 
 get_standard_answer <- function(df) {
